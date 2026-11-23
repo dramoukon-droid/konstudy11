@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>KonStudy — Ψηφιακή Πλατφόρμα Λυκείου</title>
+    <style>
+        /* =====================================================================
+           1. BESPOKE EDITORIAL DARK ARCHITECTURE (Zero External Dependencies)
+           ===================================================================== */
+        :root {
+            --bg-0: #040711;
+            --bg-1: #0a1020;
+            --surface: rgba(12, 19, 37, 0.88);
+            --surface-solid: #0c1325;
+            --border: rgba(148, 163, 184, 0.16);
+            --border-strong: rgba(56, 189, 248, 0.48);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --sky: #38bdf8;
+            --indigo: #818cf8;
+            --emerald: #34d399;
+            --amber: #fbbf24;
+            --rose: #fb7185;
+            --radius-xl: 22px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-sans);
+            background: var(--bg-0);
+            color: var(--text-main);
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Aurora & Architectural Mesh */
+        .bg-aura {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background:
+                radial-gradient(1000px circle at 10% -10%, rgba(14, 165, 233, 0.16), transparent 55%),
+                radial-gradient(900px circle at 92% 8%, rgba(99, 102, 241, 0.14), transparent 52%),
+                radial-gradient(800px circle at 50% 105%, rgba(16, 185, 129, 0.09), transparent 55%),
+                var(--bg-0);
+        }
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
+            background-size: 52px 52px;
+            mask-image: radial-gradient(ellipse at 50% 35%, #000 35%, transparent 85%);
+            -webkit-mask-image: radial-gradient(ellipse at 50% 35%, #000 35%, transparent 85%);
+            pointer-events: none;
+        }
+        #ambientCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        main {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            padding: 28px 0 56px;
+        }
+
+        /* Sticky Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(4, 7, 17, 0.88);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+        }
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            padding: 1.5px;
+            box-shadow: 0 8px 24px rgba(56, 189, 248, 0.25);
+        }
+        .brand-mark-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 11.5px;
+            background: #060b19;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 19px;
+            color: var(--sky);
+        }
+        .brand-title {
+            font-size: 17.5px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .brand-pill {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(52, 211, 153, 0.12);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            color: var(--emerald);
+        }
+        .brand-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: #cbd5e1;
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 700;
+            padding: 8px 13px;
+            border-radius: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            color: #fff;
+            background: rgba(30, 41, 59, 0.65);
+        }
+        .nav-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
+            color: #bae6fd;
+        }
+
+        /* Surfaces */
+        .panel {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: 0 22px 48px -20px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .panel-interactive {
+            transition: transform 0.22s cubic-bezier(.22,1,.36,1), border-color 0.22s ease, box-shadow 0.22s ease;
+        }
+        .panel-interactive:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-strong);
+            box-shadow: 0 26px 50px -18px rgba(14, 165, 233, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .sub-box {
+            background: rgba(6, 10, 22, 0.88);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+        }
+
+        /* Badges & Typography */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: rgba(56, 189, 248, 0.11);
+            color: #7dd3fc;
+        }
+        .badge-emerald { border-color: rgba(52, 211, 153, 0.34); background: rgba(52, 211, 153, 0.11); color: #6ee7b7; }
+        .badge-amber { border-color: rgba(251, 191, 36, 0.34); background: rgba(251, 191, 36, 0.11); color: #fcd34d; }
+        .badge-indigo { border-color: rgba(129, 140, 248, 0.34); background: rgba(129, 140, 248, 0.12); color: #c7d2fe; }
+        .badge-rose { border-color: rgba(251, 113, 133, 0.36); background: rgba(251, 113, 133, 0.12); color: #fda4af; }
+
+        h1 { margin: 0; font-size: clamp(24px, 3.6vw, 40px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.15; color: #fff; }
+        h2 { margin: 0; font-size: clamp(18px, 2.2vw, 24px); font-weight: 800; letter-spacing: -0.015em; color: #fff; }
+        h3 { margin: 0; font-size: 16px; font-weight: 800; color: #fff; }
+        .muted { color: var(--text-muted); }
+        .mono { font-family: var(--font-mono); }
+
+        /* Inputs & Buttons */
+        input[type="text"], input[type="email"], input[type="password"], select, textarea {
+            width: 100%;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            color: #fff;
+            background: #050915;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: var(--radius-md);
+            padding: 11px 14px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--sky);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16);
+        }
+        label.field-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 11px 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.18s ease;
+        }
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        .btn:active:not(:disabled) { transform: scale(0.98); }
+        .btn-sky { background: var(--sky); color: #040914; }
+        .btn-sky:hover:not(:disabled) { background: #7dd3fc; }
+        .btn-emerald { background: var(--emerald); color: #04130d; }
+        .btn-emerald:hover:not(:disabled) { background: #6ee7b7; }
+        .btn-amber { background: var(--amber); color: #160e02; }
+        .btn-amber:hover:not(:disabled) { background: #fde047; }
+        .btn-ghost { background: rgba(15, 23, 42, 0.88); border-color: rgba(148, 163, 184, 0.24); color: #e2e8f0; }
+        .btn-ghost:hover:not(:disabled) { background: rgba(30, 41, 59, 0.92); border-color: rgba(148, 163, 184, 0.42); }
+        .btn-soft-sky { background: rgba(56, 189, 248, 0.14); border-color: rgba(56, 189, 248, 0.34); color: #bae6fd; }
+        .btn-soft-sky:hover:not(:disabled) { background: rgba(56, 189, 248, 0.24); }
+        .btn-danger { background: rgba(251, 113, 133, 0.14); border-color: rgba(251, 113, 133, 0.36); color: #fda4af; }
+        .btn-danger:hover:not(:disabled) { background: rgba(251, 113, 133, 0.25); }
+        .btn-sm { padding: 7px 12px; font-size: 12px; border-radius: 10px; }
+
+        /* Honeypot anti-bot field */
+        .hp-field {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Layout Helpers */
+        .stack { display: flex; flex-direction: column; gap: 22px; }
+        .stack-sm { display: flex; flex-direction: column; gap: 12px; }
+        .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .row-between { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; }
+        .grid-10 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+        @media (max-width: 640px) {
+            .grid-10 { grid-template-columns: repeat(5, 1fr); }
+            .panel { padding: 18px; }
+        }
+
+        /* Schedule Table */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+        th, td { padding: 11px 12px; text-align: left; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+        th { color: var(--sky); font-weight: 800; background: rgba(7, 11, 23, 0.7); }
+        tr:hover td { background: rgba(15, 23, 42, 0.45); }
+
+        /* Cookie Banner */
+        #cookieBannerRoot {
+            position: fixed;
+            left: 16px;
+            right: 16px;
+            bottom: 16px;
+            z-index: 85;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .cookie-card {
+            pointer-events: auto;
+            max-width: 820px;
+            width: 100%;
+            background: rgba(8, 13, 28, 0.97);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-radius: 18px;
+            padding: 18px 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+        }
+
+        /* Toast */
+        #toastBox {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            max-width: 420px;
+            padding: 13px 18px;
+            border-radius: 14px;
+            background: rgba(9, 14, 28, 0.96);
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            color: #f8fafc;
+            font-size: 12.5px;
+            font-weight: 700;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.75);
+            display: none;
+        }
+
+        @keyframes viewEnter {
+            from { opacity: 0; transform: translateY(7px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .view-enter { animation: viewEnter 0.26s cubic-bezier(.22,1,.36,1) forwards; }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--border);
+            background: rgba(4, 7, 17, 0.9);
+            padding: 20px 0;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--sky);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+        }
+
+        /* Print / A4 PDF Sheet */
+        #examPrintSheet {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 20px;
+            padding: 36px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+        }
+        @media print {
+            body { background: #ffffff !important; color: #000000 !important; }
+            .no-print, header, footer, #ambientCanvas, .bg-aura, .bg-grid, #toastBox, #cookieBannerRoot { display: none !important; }
+            main { padding: 0 !important; }
+            .container { max-width: 100% !important; padding: 0 !important; }
+            #examPrintSheet {
+                display: block !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                border-radius: 0 !important;
+            }
+            #examPrintSheet * { color: #000000 !important; border-color: #1e293b !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-aura no-print"></div>
+    <div class="bg-grid no-print"></div>
+    <canvas id="ambientCanvas" class="no-print"></canvas>
+    <div id="toastBox" class="no-print"></div>
+    <div id="cookieBannerRoot" class="no-print"></div>
+
+    <!-- Header -->
+    <header class="no-print">
+        <div class="container nav-bar">
+            <button type="button" class="brand" onclick="navigate('home')">
+                <div class="brand-mark"><div class="brand-mark-inner">K</div></div>
+                <div>
+                    <div class="brand-title">
+                        <span>KonStudy</span>
+                        <span class="brand-pill">GDPR &amp; HTTPS</span>
+                    </div>
+                    <div class="brand-sub">Ψηφιακή Πλατφόρμα Εκπαίδευσης</div>
+                </div>
+            </button>
+
+            <nav id="mainNav">
+                <button type="button" class="nav-btn" data-nav="home" onclick="navigate('home')">Αρχική</button>
+                <button type="button" class="nav-btn" data-nav="sections" onclick="navigate('sections')">Τμήματα Α1–Γ3</button>
+                <button type="button" class="nav-btn" data-nav="schedule" onclick="navigate('schedule')">Πρόγραμμα</button>
+                <button type="button" class="nav-btn" data-nav="exams" onclick="navigate('exams')">Διαγωνίσματα PDF</button>
+                <button type="button" class="nav-btn" data-nav="teacher" onclick="navigate('teacher')">Καθηγητές</button>
+                <button type="button" class="nav-btn" data-nav="admin" onclick="navigate('admin')">Admin</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Workspace (Page-by-Page Views) -->
+    <main>
+        <div id="appRoot" class="container"></div>
+    </main>
+
+    <!-- Legal & GDPR Compliant Footer -->
+    <footer class="no-print">
+        <div class="container stack-sm" style="gap:10px;">
+            <div class="row-between">
+                <div class="row">
+                    <span style="width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block;"></span>
+                    <span><strong style="color:#f1f5f9;">KonStudy</strong> • Ψηφιακή Πλατφόρμα Λυκείου</span>
+                </div>
+                <div class="row" style="gap:16px;">
+                    <button type="button" class="link-btn" onclick="openLegalPage('privacy')">Πολιτική Απορρήτου (/privacy)</button>
+                    <button type="button" class="link-btn" onclick="openLegalPage('terms')">Όροι Χρήσης (/terms)</button>
+                    <button type="button" class="link-btn" onclick="reopenCookieBanner()">Ρυθμίσεις Cookies</button>
+                </div>
+            </div>
+            <div class="row-between" style="font-size:11.5px;color:#64748b;">
+                <span>Τα σχολικά βιβλία παραπέμπουν στους επίσημους, ελεύθερα προσβάσιμους πόρους του ΥΠΑΙΘΑ / ΙΤΥΕ «Διόφαντος» (<span class="mono">ebooks.edu.gr</span>).</span>
+                <span>Δημιουργία &amp; Ανάπτυξη: <strong style="color:#7dd3fc;">Κωνσταντίνος Δραμουντάνης</strong></span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // =====================================================================
+        // 1. INLINE SVG ICONS (Zero External Requests)
+        // =====================================================================
+        const SVG = {
+            book: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>`,
+            users: `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+            calendar: `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
+            grad: `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+            shield: `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+            file: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+            arrow: `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`
+        };
+
+        // =====================================================================
+        // 2. CRYPTOGRAPHY, XSS PROTECTION, RATE LIMITING & UPLOAD VALIDATION
+        // =====================================================================
+        const CRYPTO_SALT = "KonStudy_Lykeio_2026_SecureSalt!";
+        const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB limit
+        const ALLOWED_UPLOAD_EXTS = [".pdf", ".png", ".jpg", ".jpeg"];
+        const ALLOWED_UPLOAD_MIMES = ["application/pdf", "image/png", "image/jpeg"];
+        const SESSION_TIMEOUT_MS = 15 * 60 * 1000; // 15 min inactivity auto-logout
+
+        async function sha256Hex(text) {
+            const payload = String(text) + CRYPTO_SALT;
+            if (window.crypto && window.crypto.subtle) {
+                const buf = new TextEncoder().encode(payload);
+                const hashBuf = await crypto.subtle.digest("SHA-256", buf);
+                return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
+            }
+            let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+            for (let i = 0; i < payload.length; i++) {
+                const ch = payload.charCodeAt(i);
+                h1 = Math.imul(h1 ^ ch, 2654435761);
+                h2 = Math.imul(h2 ^ ch, 1597334677);
+            }
+            h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+            h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+            return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+        }
+
+        function esc(str) {
+            return String(str ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function containsSensitivePII(text) {
+            const cleaned = String(text || "");
+            return /\b(69\d{8}|2\d{9})\b/.test(cleaned) || /\b\d{9,11}\b/.test(cleaned);
+        }
+
+        function isStrongPassword(pass) {
+            return typeof pass === "string" &&
+                pass.length >= 10 &&
+                /[a-z]/.test(pass) &&
+                /[A-Z]/.test(pass) &&
+                /\d/.test(pass);
+        }
+
+        // Per-minute Anti-Spam Rate Limiter
+        const rateBuckets = new Map();
+        function checkRateLimit(bucketKey, maxPerMinute = 15) {
+            const now = Date.now();
+            const windowMs = 60 * 1000;
+            const prev = (rateBuckets.get(bucketKey) || []).filter(ts => now - ts < windowMs);
+            if (prev.length >= maxPerMinute) {
+                return false;
+            }
+            prev.push(now);
+            rateBuckets.set(bucketKey, prev);
+            return true;
+        }
+
+        // Brute-Force Rate Limiting (5 failed attempts -> 60s cooldown)
+        const authGuard = {
+            adminFails: 0,
+            adminLockedUntil: 0,
+            teacherFails: 0,
+            teacherLockedUntil: 0
+        };
+
+        function showToast(msg) {
+            const box = document.getElementById("toastBox");
+            if (!box) return;
+            box.textContent = msg;
+            box.style.display = "block";
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => { box.style.display = "none"; }, 4200);
+        }
+
+        function detectDeviceLabel() {
+            const ua = navigator.userAgent || "";
+            let os = "Συσκευή";
+            if (/Windows NT 10/i.test(ua)) os = "Windows PC";
+            else if (/Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) os = "MacBook / macOS";
+            else if (/iPhone/i.test(ua)) os = "iPhone";
+            else if (/iPad/i.test(ua)) os = "iPad";
+            else if (/Android/i.test(ua)) os = "Android";
+            else if (/Linux/i.test(ua)) os = "Linux";
+
+            let browser = "Browser";
+            if (/Edg\//i.test(ua)) browser = "Edge";
+            else if (/Chrome\//i.test(ua)) browser = "Chrome";
+            else if (/Safari\//i.test(ua)) browser = "Safari";
+            else if (/Firefox\//i.test(ua)) browser = "Firefox";
+            return `${os} (${browser})`;
+        }
+
+        function validateUploadFile(file, requireImage = false) {
+            if (!file) return { ok: false, reason: "Δεν επιλέχθηκε αρχείο." };
+            if (file.size > MAX_UPLOAD_BYTES) {
+                return { ok: false, reason: "Το αρχείο υπερβαίνει το όριο των 5 MB." };
+            }
+            const lowerName = (file.name || "").toLowerCase();
+            const hasAllowedExt = ALLOWED_UPLOAD_EXTS.some(ext => lowerName.endsWith(ext));
+            const hasAllowedMime = ALLOWED_UPLOAD_MIMES.includes((file.type || "").toLowerCase());
+            if (!hasAllowedExt || !hasAllowedMime) {
+                return { ok: false, reason: "Επιτρέπονται μόνο αρχεία .pdf, .png, .jpg, .jpeg." };
+            }
+            if (requireImage && !(file.type || "").startsWith("image/")) {
+                return { ok: false, reason: "Επιτρέπονται μόνο εικόνες (.png, .jpg, .jpeg) για τη φωτογραφία πίνακα." };
+            }
+            return { ok: true };
+        }
+
+        function compressPhotoDataUrl(file, maxDim = 680, quality = 0.68) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let w = img.width, h = img.height;
+                        if (w > maxDim || h > maxDim) {
+                            if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+                            else { w = Math.round(w * maxDim / h); h = maxDim; }
+                        }
+                        const c = document.createElement("canvas");
+                        c.width = w; c.height = h;
+                        c.getContext("2d").drawImage(img, 0, 0, w, h);
+                        resolve(c.toDataURL("image/jpeg", quality));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // =====================================================================
+        // 3. ALL 31 OFFICIAL LYCEUM COURSES — VERIFIED HTTPS HANDLE LINKS
+        // =====================================================================
+        const DIOPHANTUS_CLASS_PORTALS = {
+            "Α' Λυκείου": "https://ebooks.edu.gr/ebooks/v2/class-main.jsp?classcode=K10",
+            "Β' Λυκείου": "https://ebooks.edu.gr/ebooks/v2/class-main.jsp?classcode=K11",
+            "Γ' Λυκείου": "https://ebooks.edu.gr/ebooks/v2/class-main.jsp?classcode=K12"
+        };
+
+        const INITIAL_COURSES = [
+            // Α' Λυκείου (11)
+            { id: "a_alg", grade: "Α' Λυκείου", title: "Άλγεβρα Α' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2027", units: ["Κεφ. 1: Οι πραγματικοί αριθμοί", "Κεφ. 2: Εξισώσεις 1ου & 2ου βαθμού", "Κεφ. 3: Ανισώσεις", "Κεφ. 4: Συναρτήσεις"], sos: "Διάκριση ρίζας τετραγώνου √(x²) = |x| και διερεύνηση εξίσωσης 2ου βαθμού με παράμετρο.", notes: "", photo: "", quiz: [{ q: "Πόσο ισούται √((-5)²);", options: ["-5", "5", "±5", "25"], answer: 1 }] },
+            { id: "a_geom", grade: "Α' Λυκείου", title: "Γεωμετρία Α' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2028", units: ["Κεφ. 1: Βασικές γεωμετρικές έννοιες", "Κεφ. 2: Τρίγωνα & Ισότητα τριγώνων", "Κεφ. 3: Παράλληλες ευθείες", "Κεφ. 4: Παραλληλόγραμμα & Τραπέζια"], sos: "Κριτήρια ισότητας τριγώνων (Π-Γ-Π, Γ-Π-Γ, Π-Π-Π) και ιδιότητες ισοσκελούς τριγώνου.", notes: "", photo: "", quiz: [{ q: "Το άθροισμα των γωνιών ενός τριγώνου είναι:", options: ["90°", "180°", "270°", "360°"], answer: 1 }] },
+            { id: "a_phys", grade: "Α' Λυκείου", title: "Φυσική Α' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2032", units: ["Κεφ. 1: Ευθύγραμμη κίνηση (ΕΟΚ & ΕΟΜΚ)", "Κεφ. 2: Δυναμική σε μία διάσταση (Νόμοι Νεύτωνα)", "Κεφ. 3: Ελεύθερη πτώση", "Κεφ. 4: Διατήρηση Μηχανικής Ενέργειας"], sos: "Διαγράμματα ταχύτητας-χρόνου (u-t) και εφαρμογή 2ου Νόμου Νεύτωνα ΣF = m·a.", notes: "", photo: "", quiz: [{ q: "Η μονάδα μέτρησης της δύναμης στο S.I. είναι:", options: ["Joule", "Watt", "Newton", "Pascal"], answer: 2 }] },
+            { id: "a_chem", grade: "Α' Λυκείου", title: "Χημεία Α' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2033", units: ["Κεφ. 1: Βασικές έννοιες & Δομή ατόμου", "Κεφ. 2: Περιοδικός Πίνακας & Χημικοί Δεσμοί", "Κεφ. 3: Οξέα, Βάσεις, Άλατα, Οξείδια", "Κεφ. 4: Στοιχειομετρία & Συγκέντρωση διαλυμάτων"], sos: "Γραφή χημικών τύπων με αριθμούς οξείδωσης και υπολογισμός μοριακότητας (M = n/V).", notes: "", photo: "", quiz: [{ q: "Ποιος είναι ο ατομικός αριθμός του Άνθρακα (C);", options: ["4", "6", "12", "14"], answer: 1 }] },
+            { id: "a_bio", grade: "Α' Λυκείου", title: "Βιολογία Α' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2020", units: ["Κεφ. 1: Από το κύτταρο στον οργανισμό", "Κεφ. 2: Κυκλοφορικό σύστημα", "Κεφ. 3: Νευρικό σύστημα & Αισθητήρια όργανα", "Κεφ. 4: Αναπαραγωγικό σύστημα"], sos: "Δομή νευρώνα, σύναψη και λειτουργία καρδιάς.", notes: "", photo: "", quiz: [{ q: "Ποια κύτταρα του αίματος μεταφέρουν οξυγόνο;", options: ["Λευκά αιμοσφαίρια", "Αιμοπετάλια", "Ερυθρά αιμοσφαίρια", "Πλάσμα"], answer: 2 }] },
+            { id: "a_anc", grade: "Α' Λυκείου", title: "Αρχαία Ελληνικά Α' Λυκείου", category: "Ανθρωπιστικές Σπουδές", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2019", units: ["Ξενοφώντος Ελληνικά (Βιβλίο Β')", "Θουκυδίδου Ιστορίαι", "Γραμματική & Συντακτικό Αττικής διαλέκτου"], sos: "Χρονική και υποθετική μετοχή, συντακτική αναγνώριση όρων πρότασης.", notes: "", photo: "", quiz: [{ q: "Ποιος έγραψε τα «Ελληνικά»;", options: ["Θουκυδίδης", "Ξενοφών", "Ηρόδοτος", "Πλάτων"], answer: 1 }] },
+            { id: "a_mod", grade: "Α' Λυκείου", title: "Νέα Ελληνική Γλώσσα & Λογοτεχνία Α'", category: "Ανθρωπιστικές Σπουδές", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2029", units: ["Ενότητα 1: Γλώσσα & Επικοινωνία", "Ενότητα 2: Νέοι & ΜΜΕ", "Ενότητα 3: Εθελοντισμός & Αλληλεγγύη", "Περίληψη & Παραγωγή Λόγου"], sos: "Δομή παραγράφου (Θεματική περίοδος, Σχόλια/Λεπτομέρειες, Κατακλείδα) & τρόποι πειθούς.", notes: "", photo: "", quiz: [] },
+            { id: "a_hist", grade: "Α' Λυκείου", title: "Ιστορία Α' Λυκείου (Αρχαίος Κόσμος)", category: "Ανθρωπιστικές Σπουδές", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2024", units: ["Κεφ. 1: Πολιτισμοί της Ανατολής", "Κεφ. 2: Αρχαία Ελλάδα (Μινωικός - Μυκηναϊκός)", "Κεφ. 3: Κλασική Εποχή & Ελληνιστικοί Χρόνοι", "Κεφ. 4: Ρωμαϊκή Αυτοκρατορία"], sos: "Μεταρρυθμίσεις Σόλωνα & Κλεισθένη, Δημοκρατία του Περικλή.", notes: "", photo: "", quiz: [] },
+            { id: "a_pol", grade: "Α' Λυκείου", title: "Πολιτική Παιδεία Α' Λυκείου", category: "Κοινωνικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2025", units: ["Κεφ. 1: Κοινωνία & Κοινωνικοποίηση", "Κεφ. 2: Πολίτης & Δημοκρατία", "Κεφ. 3: Οικονομία & Αγορά", "Κεφ. 4: Ευρωπαϊκή Ένωση"], sos: "Διάκριση των εξουσιών (Νομοθετική, Εκτελεστική, Δικαστική).", notes: "", photo: "", quiz: [] },
+            { id: "a_cs", grade: "Α' Λυκείου", title: "Εφαρμογές Πληροφορικής Α' Λυκείου", category: "Πληροφορική & Τεχνολογία", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2031", units: ["Ενότητα 1: Υλικό & Λογισμικό Υπολογιστών", "Ενότητα 2: Δίκτυα & Διαδίκτυο", "Ενότητα 3: Εισαγωγή στον Προγραμματισμό (Scratch / Python)", "Ενότητα 4: Ασφάλεια & Ψηφιακός Πολίτης"], sos: "Δυαδικό σύστημα αριθμών, πρωτόκολλα HTTP/HTTPS και βασικές δομές επιλογής.", notes: "", photo: "", quiz: [] },
+            { id: "a_eng", grade: "Α' Λυκείου", title: "Αγγλικά Α' Λυκείου", category: "Ξένες Γλώσσες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2014", units: ["Unit 1: Youth & Culture", "Unit 2: Science & Innovation", "Unit 3: Environment & Sustainability"], sos: "Conditionals (Types 0, 1, 2, 3), Passive Voice, Reading Comprehension.", notes: "", photo: "", quiz: [] },
+
+            // Β' Λυκείου (10)
+            { id: "b_alg", grade: "Β' Λυκείου", title: "Άλγεβρα Β' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2049", units: ["Κεφ. 1: Συστήματα εξισώσεων", "Κεφ. 2: Βασικές ιδιότητες συναρτήσεων", "Κεφ. 3: Τριγωνομετρία (Τριγωνομετρικές συναρτήσεις & εξισώσεις)", "Κεφ. 4: Πολυώνυμα & Πολυωνυμικές εξισώσεις"], sos: "Βασική τριγωνομετρική ταυτότητα ημ²x + συν²x = 1, σχήμα Horner και θεώρημα υπολοίπου.", notes: "", photo: "", quiz: [] },
+            { id: "b_geom", grade: "Β' Λυκείου", title: "Γεωμετρία Β' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2050", units: ["Κεφ. 5: Εγγεγραμμένα & Περιγεγραμμένα πολύγωνα", "Κεφ. 6: Αναλογία & Ομοιότητα", "Κεφ. 7: Μετρικές σχέσεις σε τρίγωνο & κύκλο", "Κεφ. 8: Εμβαδά επίπεδων σχημάτων"], sos: "Θεώρημα Θαλή, Πυθαγόρειο θεώρημα, Νόμος Συνημιτόνων & Ημιτόνων.", notes: "", photo: "", quiz: [] },
+            { id: "b_math_p", grade: "Β' Λυκείου", title: "Μαθηματικά Προσανατολισμού Β' Λυκείου", category: "Ομάδα Προσανατολισμού", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2052", units: ["Κεφ. 1: Διανύσματα στο επίπεδο", "Κεφ. 2: Η ευθεία στο επίπεδο", "Κεφ. 3: Κωνικές τομές (Κύκλος, Παραβολή, Έλλειψη, Υπερβολή)"], sos: "Εσωτερικό γινόμενο διανυσμάτων, εξίσωση ευθείας, απόσταση σημείου από ευθεία.", notes: "", photo: "", quiz: [] },
+            { id: "b_phys_g", grade: "Β' Λυκείου", title: "Φυσική Γενικής Παιδείας Β' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2055", units: ["Κεφ. 1: Ηλεκτροστατική (Νόμος Coulomb)", "Κεφ. 2: Συνεχές Ηλεκτρικό Ρεύμα", "Κεφ. 3: Φως & Οπτική", "Κεφ. 4: Ατομική & Πυρηνική Φυσική"], sos: "Νόμος του Ohm, συνδεσμολογία αντιστατών σε σειρά και παράλληλα, ισχύς ρεύματος.", notes: "", photo: "", quiz: [] },
+            { id: "b_phys_p", grade: "Β' Λυκείου", title: "Φυσική Προσανατολισμού Β' Λυκείου", category: "Ομάδα Προσανατολισμού", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2056", units: ["Κεφ. 1: Καμπυλόγραμμες κινήσεις (Οριζόντια βολή & Ομαλή κυκλική)", "Κεφ. 2: Διατήρηση Ορμής & Κρούσεις", "Κεφ. 3: Κινητική θεωρία αερίων & Θερμοδυναμική", "Κεφ. 4: Ηλεκτρικό πεδίο"], sos: "Αρχή Διατήρησης Ορμής σε κεντρικές ελαστικές και πλαστικές κρούσεις, 1ος Θερμοδυναμικός Νόμος.", notes: "", photo: "", quiz: [] },
+            { id: "b_chem", grade: "Β' Λυκείου", title: "Χημεία Β' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2057", units: ["Κεφ. 1: Εισαγωγή στην Οργανική Χημεία", "Κεφ. 2: Υδρογονάνθρακες (Αλκάνια, Αλκένια, Αλκίνια)", "Κεφ. 3: Αλκοόλες & Καρβοξυλικά οξέα", "Κεφ. 4: Βιομόρια & Πολυμερή"], sos: "Ονοματολογία οργανικών ενώσεων κατά IUPAC, αντιδράσεις προσθήκης & καύσης υδρογονανθράκων.", notes: "", photo: "", quiz: [] },
+            { id: "b_bio", grade: "Β' Λυκείου", title: "Βιολογία Β' Λυκείου", category: "Θετικές Επιστήμες", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2040", units: ["Κεφ. 1: Χημική σύσταση του κυττάρου", "Κεφ. 2: Κυτταρική δομή & λειτουργία", "Κεφ. 3: Μεταβολισμός & Ένζυμα", "Κεφ. 4: Γενετική & Κυτταρική διαίρεση (Μίτωση - Μείωση)"], sos: "Διαφορές προκαρυωτικού & ευκαρυωτικού κυττάρου, φωτοσύνθεση, κυτταρική αναπνοή, μίτωση vs μείωση.", notes: "", photo: "", quiz: [] },
+            { id: "b_anc_p", grade: "Β' Λυκείου", title: "Αρχαία Ελληνικά Προσανατολισμού Β'", category: "Ομάδα Προσανατολισμού", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2038", units: ["Λυσίου Υπέρ Μαντιθέου", "Σοφοκλέους Αντιγόνη", "Αδίδακτο κείμενο (Αττικοί ρήτορες)"], sos: "Αντιγόνη: σύγκρουση θεϊκού και ανθρώπινου νόμου, συντακτικό απαρεμφάτου & πλαγίου λόγου.", notes: "", photo: "", quiz: [] },
+            { id: "b_mod", grade: "Β' Λυκείου", title: "Νέα Ελληνική Γλώσσα & Λογοτεχνία Β'", category: "Ανθρωπιστικές Σπουδές", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2053", units: ["Ενότητα 1: Παιδεία & Εκπαίδευση", "Ενότητα 2: Τεχνολογία & Άνθρωπος", "Ενότητα 3: Παράδοση & Νεωτερικότητα", "Επιχειρηματολογία & Ερμηνευτικό Σχόλιο"], sos: "Συνοχή και συνεκτικότητα κειμένου, αφηγηματικοί τρόποι στη Λογοτεχνία.", notes: "", photo: "", quiz: [] },
+            { id: "b_hist", grade: "Β' Λυκείου", title: "Ιστορία Β' Λυκείου (Μεσαιωνικός & Νεότερος Κόσμος)", category: "Ανθρωπιστικές Σπουδές", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2044", units: ["Κεφ. 1: Βυζαντινή Αυτοκρατορία", "Κεφ. 2: Ευρωπαϊκός Μεσαίωνας & Αναγέννηση", "Κεφ. 3: Διαφωτισμός & Γαλλική Επανάσταση", "Κεφ. 4: Ελληνική Επανάσταση 1821"], sos: "Μεταρρυθμίσεις Ηρακλείου, Εικονομαχία, Διακήρυξη Δικαιωμάτων του Ανθρώπου και του Πολίτη.", notes: "", photo: "", quiz: [] },
+
+            // Γ' Λυκείου (10)
+            { id: "c_math", grade: "Γ' Λυκείου", title: "Μαθηματικά Προσανατολισμού Γ' Λυκείου", category: "Πανελλαδικές • Θετικές / Οικονομίας", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2355", units: ["Κεφ. 1: Όρια & Συνέχεια συνάρτησης (Bolzano, Ενδιαμέσων Τιμών)", "Κεφ. 2: Διαφορικός Λογισμός (Παράγωγος, Rolle, ΘΜΤ, Μονοτονία, Ακρότατα)", "Κεφ. 3: Ολοκληρωτικός Λογισμός (Αόριστο & Ορισμένο ολοκλήρωμα, Εμβαδά)"], sos: "Θεώρημα Bolzano, Θεώρημα Μέσης Τιμής (ΘΜΤ), Μελέτη συνάρτησης & ασύμπτωτες, Θ.Θ.Ο.Λ.", notes: "", photo: "", quiz: [] },
+            { id: "c_phys", grade: "Γ' Λυκείου", title: "Φυσική Προσανατολισμού Γ' Λυκείου", category: "Πανελλαδικές • Θετικές & Υγείας", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2358", units: ["Κεφ. 1: Ταλαντώσεις (ΑΑΤ, Φθίνουσα, Εξαναγκασμένη, Συντονισμός)", "Κεφ. 2: Κύματα & Συμβολή", "Κεφ. 3: Μηχανική Στερεού Σώματος (Ροπή αδράνειας, Κύλιση, Στροφορμή)", "Κεφ. 4: Ηλεκτρομαγνητισμός (Laplace, Επαγωγή Faraday, Εναλλασσόμενο ρεύμα)"], sos: "Εξισώσεις Απλής Αρμονικής Ταλάντωσης, Διατήρηση Στροφορμής, Νόμος Επαγωγής Faraday - Lenz.", notes: "", photo: "", quiz: [] },
+            { id: "c_chem", grade: "Γ' Λυκείου", title: "Χημεία Προσανατολισμού Γ' Λυκείου", category: "Πανελλαδικές • Θετικές & Υγείας", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2359", units: ["Κεφ. 1: Ηλεκτρονιακή δομή ατόμων & Περιοδικός πίνακας", "Κεφ. 2: Διαμοριακές δυνάμεις & Ωσμωτική πίεση", "Κεφ. 3: Χημική Κινητική & Χημική Ισορροπία (Le Chatelier)", "Κεφ. 4: Οξέα - Βάσεις - Ιοντική Ισορροπία (pH, Ρυθμιστικά διαλύματα)", "Κεφ. 5: Οργανική Χημεία & Οξειδοαναγωγή"], sos: "Υπολογισμός pH ρυθμιστικών διαλυμάτων & ογκομέτρησης, Αρχή Le Chatelier, αντιδράσεις Grignard & αλδολική.", notes: "", photo: "", quiz: [] },
+            { id: "c_bio", grade: "Γ' Λυκείου", title: "Βιολογία Προσανατολισμού Γ' Λυκείου", category: "Πανελλαδικές • Επιστήμες Υγείας", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2064", units: ["Κεφ. 1: Γενετικό Υλικό (DNA - RNA)", "Κεφ. 2: Αντιγραφή, Έκφραση & Ρύθμιση γενετικής πληροφορίας", "Κεφ. 4: Τεχνολογία Ανασυνδυασμένου DNA", "Κεφ. 5: Μενδελική Κληρονομικότητα & Μεταλλάξεις", "Κεφ. 6-7: Εξέλιξη & Οικολογία"], sos: "Αντιγραφή DNA, Μεταγραφή & Μετάφραση, Οπερόνιο της λακτόζης, διασταυρώσεις Μέντελ & γενεαλογικά δέντρα.", notes: "", photo: "", quiz: [] },
+            { id: "c_mod", grade: "Γ' Λυκείου", title: "Νεοελληνική Γλώσσα & Λογοτεχνία Γ' (Πανελλαδικές)", category: "Πανελλαδικές • Όλες οι Κατευθύνσεις", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2074", units: ["Περίληψη μη λογοτεχνικού κειμένου", "Δομή, συνοχή, πειθώ & γλωσσικά μέσα", "Ερμηνευτικό σχόλιο Λογοτεχνικού κειμένου (150-200 λέξεις)", "Παραγωγή επικοινωνιακού λόγου (Άρθρο / Ομιλία / Δοκίμιο)"], sos: "Ορθή στόχευση επικοινωνιακού πλαισίου (πομπός, δέκτης, σκοπός) και τεκμηρίωση ερμηνευτικού σχολίου με κειμενικούς δείκτες.", notes: "", photo: "", quiz: [] },
+            { id: "c_anc", grade: "Γ' Λυκείου", title: "Αρχαία Ελληνικά Προσανατολισμού Γ' Λυκείου", category: "Πανελλαδικές • Ανθρωπιστικές Σπουδές", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2062", units: ["Πλάτωνος Πολιτεία & Πρωταγόρας", "Αριστοτέλους Ηθικά Νικομάχεια & Πολιτικά", "Αδίδακτο κείμενο (Μετάφραση, Γραμματική, Συντακτικό)"], sos: "Αλληγορία του Σπηλαίου (Πλάτων), Μύθος του Προμηθέα, ηθική αρετή & μεσότητα (Αριστοτέλης).", notes: "", photo: "", quiz: [] },
+            { id: "c_hist", grade: "Γ' Λυκείου", title: "Ιστορία Προσανατολισμού Γ' Λυκείου", category: "Πανελλαδικές • Ανθρωπιστικές Σπουδές", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2069", units: ["Κεφ. 1: Από την αγροτική οικονομία στην αστικοποίηση", "Κεφ. 2: Η διαμόρφωση των πολιτικών κομμάτων (1844-1909)", "Κεφ. 3: Το Κρητικό Ζήτημα", "Κεφ. 4: Προσφυγικό ζήτημα & Μικρασιατική Καταστροφή (1922)"], sos: "Συνδυαστική σύνθεση ιστορικών πηγών με το σχολικό κείμενο (ακρίβεια παραπομπών).", notes: "", photo: "", quiz: [] },
+            { id: "c_lat", grade: "Γ' Λυκείου", title: "Λατινικά Προσανατολισμού Γ' Λυκείου", category: "Πανελλαδικές • Ανθρωπιστικές Σπουδές", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2073", units: ["Ενότητες 1-15: Ρωμαϊκή ιστορία, ρητορική & φιλοσοφία", "Ενότητες 16-30: Κικέρων, Καίσαρ, Λίβιος, Σενέκας", "Γραμματικοί & Συντακτικοί μετασχηματισμοί"], sos: "Μετατροπή ενεργητικής σε παθητική σύνταξη, πλάγιος λόγος, αφαιρετική απόλυτη, γερουνδιακό.", notes: "", photo: "", quiz: [] },
+            { id: "c_aepp", grade: "Γ' Λυκείου", title: "Πληροφορική (ΑΕΠΠ) Γ' Λυκείου", category: "Πανελλαδικές • Οικονομίας & Πληροφορικής", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2079", units: ["Κεφ. 1-2: Ανάλυση προβλήματος & Αλγόριθμοι", "Κεφ. 3-6: Δομές δεδομένων (Πίνακες, Στοίβα, Ουρά, Λίστες, Δέντρα)", "Κεφ. 7-10: ΓΛΩΣΣΑ προγραμματισμού (Δομές επιλογής, επανάληψης, υποπρογράμματα)"], sos: "Δυαδική αναζήτηση, ταξινόμηση φυσαλίδας (Bubble Sort), διαδικασίες & συναρτήσεις στη ΓΛΩΣΣΑ.", notes: "", photo: "", quiz: [] },
+            { id: "c_aoth", grade: "Γ' Λυκείου", title: "Οικονομία (ΑΟΘ) Γ' Λυκείου", category: "Πανελλαδικές • Οικονομίας & Πληροφορικής", bookUrl: "https://ebooks.edu.gr/ebooks/handle/8547/2086", units: ["Κεφ. 1: Βασικές Οικονομικές Έννοιες & Κ.Π.Δ.", "Κεφ. 2: Ζήτηση αγαθών & Ελαστικότητα ζήτησης", "Κεφ. 3-4: Παραγωγή, Κόστος & Προσφορά", "Κεφ. 5: Προσδιορισμός τιμών (Ισορροπία αγοράς)", "Κεφ. 7-9: Α.Ε.Π., Πληθωρισμός & Ανεργία"], sos: "Καμπύλη Παραγωγικών Δυνατοτήτων (ΚΠΔ), ελαστικότητα τόξου Ed, μετατόπιση καμπυλών D & S.", notes: "", photo: "", quiz: [] }
+        ];
+
+        const SECTIONS_LIST = ["Α1", "Α2", "Α3", "Β1", "Β2", "Β3", "Γ1", "Γ2", "Γ3"];
+        const DAYS_LIST = ["Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή"];
+
+        function createDefaultSchedule() {
+            const sch = {};
+            SECTIONS_LIST.forEach(sec => {
+                sch[sec] = {};
+                const gradeCourses = INITIAL_COURSES.filter(c =>
+                    sec.startsWith("Α") ? c.grade === "Α' Λυκείου" :
+                    sec.startsWith("Β") ? c.grade === "Β' Λυκείου" : c.grade === "Γ' Λυκείου"
+                );
+                DAYS_LIST.forEach((day, dIdx) => {
+                    sch[sec][day] = Array.from({ length: 7 }, (_, h) => {
+                        const c = gradeCourses[(dIdx * 3 + h) % gradeCourses.length];
+                        return c ? c.title : "Ελεύθερη Ώρα";
+                    });
+                });
+            });
+            return sch;
+        }
+
+        const DEFAULT_DB = {
+            schoolInfo: {
+                name: "KonStudy — Ψηφιακή Πλατφόρμα Λυκείου",
+                subtitle: "Ολοκληρωμένο Περιβάλλον Μαθητών & Εκπαιδευτικών"
+            },
+            adminPassHash: "",
+            integrations: {
+                emailjsServiceId: "",
+                emailjsTemplateId: "",
+                emailjsPublicKey: ""
+            },
+            courses: INITIAL_COURSES,
+            teachers: [],
+            sectionCodes: {
+                "Α1": "A1-2026", "Α2": "A2-2026", "Α3": "A3-2026",
+                "Β1": "B1-2026", "Β2": "B2-2026", "Β3": "B3-2026",
+                "Γ1": "G1-2026", "Γ2": "G2-2026", "Γ3": "G3-2026"
+            },
+            classroomPosts: [
+                {
+                    id: "p_welcome",
+                    sections: ["Α1", "Α2", "Α3", "Β1", "Β2", "Β3", "Γ1", "Γ2", "Γ3"],
+                    teacherName: "Διαχείριση KonStudy",
+                    courseTitle: "Ενημέρωση Τμημάτων",
+                    text: "Καλώς ήρθατε στα Ψηφιακά Τμήματα του KonStudy. Εδώ δημοσιεύονται ασκήσεις, σημειώσεις και ανακοινώσεις αποκλειστικά για το τμήμα σας.",
+                    date: "Σήμερα"
+                }
+            ],
+            schedule: createDefaultSchedule(),
+            audit_logs: [
+                {
+                    timestamp: new Date().toISOString(),
+                    actor: "SYSTEM",
+                    action: "INIT",
+                    details: "Το σύστημα KonStudy αρχικοποιήθηκε με έλεγχο GDPR, Audit Log και ασφάλεια sessions."
+                }
+            ],
+            logs: [
+                `[${new Date().toLocaleTimeString("el-GR", { hour: "2-digit", minute: "2-digit" })}] Το σύστημα KonStudy αρχικοποιήθηκε (Salted SHA-256 + GDPR Compliance).`
+            ]
+        };
+
+        // =====================================================================
+        // 4. STATE, COOKIE CONSENT, SESSION TIMEOUT & AUDIT LOGGING
+        // =====================================================================
+        const STORAGE_KEY = "KONSTUDY_DB_V9";
+        const CONSENT_KEY = "KONSTUDY_COOKIE_CONSENT_V1";
+        let db = loadAppData();
+
+        function loadAppData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("KONSTUDY_DB_V8") || localStorage.getItem("KONSTUDY_DB_V7");
+                if (!raw) return JSON.parse(JSON.stringify(DEFAULT_DB));
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed.courses)) {
+                    parsed.courses.forEach(c => {
+                        const fresh = INITIAL_COURSES.find(ic => ic.id === c.id);
+                        if (fresh) c.bookUrl = fresh.bookUrl;
+                    });
+                }
+                return {
+                    ...JSON.parse(JSON.stringify(DEFAULT_DB)),
+                    ...parsed,
+                    audit_logs: Array.isArray(parsed.audit_logs) ? parsed.audit_logs : []
+                };
+            } catch (e) {
+                return JSON.parse(JSON.stringify(DEFAULT_DB));
+            }
+        }
+
+        function saveAppData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+            } catch (e) {
+                showToast("Ο χώρος αποθήκευσης browser γέμισε. Κάντε λήψη Backup.");
+            }
+        }
+
+        function logActivity(msg, action = "INFO", actor = "SYSTEM") {
+            const iso = new Date().toISOString();
+            const ts = new Date().toLocaleTimeString("el-GR", { hour: "2-digit", minute: "2-digit" });
+            db.logs.unshift(`[${ts}] ${msg}`);
+            if (db.logs.length > 80) db.logs.length = 80;
+            db.audit_logs.unshift({
+                timestamp: iso,
+                actor: String(actor || "SYSTEM"),
+                action: String(action || "INFO"),
+                details: String(msg || "")
+            });
+            if (db.audit_logs.length > 200) db.audit_logs.length = 200;
+            saveAppData();
+        }
+
+        const state = {
+            view: "home",
+            previousView: "home",
+            selectedGrade: "Α' Λυκείου",
+            selectedCourseId: null,
+            searchQuery: "",
+            completedUnits: JSON.parse(localStorage.getItem("KONSTUDY_PROGRESS") || "{}"),
+            unlockedSection: null,
+            selectedSectionInput: "Α1",
+            scheduleSection: "Α1",
+            examCourseId: "c_math",
+            examDifficulty: 5,
+            examTopicFocus: "",
+            examDuration: "2 ώρες",
+            examDraft: null,
+            examApprovedForPdf: false,
+            currentTeacher: null,
+            currentTeacherSessionVer: 1,
+            lastActivityAt: Date.now(),
+            teacherAuthMode: "login",
+            teacherTab: "guide",
+            selectedEditCourseId: null,
+            teacherAiHistory: [],
+            isAdminLoggedIn: false,
+            adminTab: "teachers",
+            cookieConsent: localStorage.getItem(CONSENT_KEY) || null,
+            cookieBannerDismissedThisSession: false
+        };
+
+        function touchActivity() {
+            state.lastActivityAt = Date.now();
+        }
+
+        function enforceSessionTimeout() {
+            if (!state.currentTeacher && !state.isAdminLoggedIn) return;
+            if (Date.now() - state.lastActivityAt > SESSION_TIMEOUT_MS) {
+                const prevTeacher = state.currentTeacher?.name;
+                state.currentTeacher = null;
+                state.currentTeacherSessionVer = 0;
+                state.isAdminLoggedIn = false;
+                try { sessionStorage.clear(); } catch (e) {}
+                logActivity(
+                    `Αυτόματη αποσύνδεση λόγω αδράνειας${prevTeacher ? " (" + prevTeacher + ")" : ""}.`,
+                    "SESSION_TIMEOUT",
+                    prevTeacher || "ADMIN"
+                );
+                showToast("Αποσυνδεθήκατε αυτόματα λόγω αδράνειας για λόγους ασφαλείας.");
+                render();
+            }
+        }
+
+        function setCookieConsent(choice) {
+            state.cookieConsent = choice;
+            state.cookieBannerDismissedThisSession = true;
+            try { localStorage.setItem(CONSENT_KEY, choice); } catch (e) {}
+            renderCookieBanner();
+            showToast(choice === "accepted" ? "Καταγράφηκε αποδοχή προαιρετικών εργαλείων." : "Απορρίφθηκαν τα προαιρετικά cookies/scripts.");
+        }
+
+        function reopenCookieBanner() {
+            state.cookieBannerDismissedThisSession = false;
+            renderCookieBanner();
+        }
+
+        function renderCookieBanner() {
+            const root = document.getElementById("cookieBannerRoot");
+            if (!root) return;
+            if (state.cookieConsent !== null && state.cookieBannerDismissedThisSession) {
+                root.innerHTML = "";
+                return;
+            }
+            root.innerHTML = `
+                <div class="cookie-card stack-sm">
+                    <div class="row-between">
+                        <strong style="color:#fff;font-size:13.5px;">Ρυθμίσεις Απορρήτου &amp; Cookies (GDPR)</strong>
+                        <span class="badge badge-emerald">Απαραίτητα Ενεργά</span>
+                    </div>
+                    <p class="muted" style="margin:0;font-size:12px;">
+                        Χρησιμοποιούμε μόνο απολύτως απαραίτητη τοπική αποθήκευση για τη λειτουργία της εφαρμογής. Προαιρετικά εξωτερικά scripts (όπως ειδοποιήσεις EmailJS ή analytics) φορτώνονται μόνο εφόσον πατήσετε <strong>«Αποδοχή»</strong>.
+                    </p>
+                    <div class="row" style="justify-content:flex-end;gap:10px;">
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="setCookieConsent('rejected')">Απόρριψη</button>
+                        <button type="button" class="btn btn-sky btn-sm" onclick="setCookieConsent('accepted')">Αποδοχή</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleUnitProgress(courseId, unitIdx) {
+            const key = `${courseId}_${unitIdx}`;
+            state.completedUnits[key] = !state.completedUnits[key];
+            try { localStorage.setItem("KONSTUDY_PROGRESS", JSON.stringify(state.completedUnits)); } catch (e) {}
+            render();
+        }
+
+        function syncHashRoute(view) {
+            const map = {
+                home: "#/home",
+                sections: "#/sections",
+                schedule: "#/schedule",
+                exams: "#/exams",
+                teacher: "#/teacher",
+                admin: "#/admin",
+                privacy: "#/privacy",
+                terms: "#/terms",
+                deleteAccount: "#/delete-account"
+            };
+            const targetHash = map[view] || "#/home";
+            try {
+                if (window.location.hash !== targetHash) {
+                    history.replaceState(null, "", targetHash);
+                }
+            } catch (e) {
+                window.location.hash = targetHash;
+            }
+        }
+
+        function navigate(view, extra = {}) {
+            touchActivity();
+            enforceSessionTimeout();
+            if (state.view && state.view !== view && state.view !== "privacy" && state.view !== "terms" && state.view !== "deleteAccount") {
+                state.previousView = state.view;
+            }
+            Object.assign(state, extra);
+            state.view = view;
+            syncHashRoute(view);
+            render();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        // =====================================================================
+        // 5. FULL-PAGE LEGAL PAGES (/privacy, /terms) & DELETE ACCOUNT PAGE
+        // =====================================================================
+        function openLegalPage(tab = "privacy") {
+            navigate(tab === "terms" ? "terms" : "privacy");
+        }
+
+        function renderLegalPageView(tab = "privacy") {
+            const routePath = tab === "terms" ? "/terms" : "/privacy";
+            const backTarget = state.previousView || "home";
+            return `
+                <div class="stack view-enter">
+                    <div class="row-between">
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="navigate('${backTarget}')">← Επιστροφή</button>
+                        <div class="row">
+                            <button type="button" class="btn btn-sm ${tab==='privacy' ? 'btn-sky' : 'btn-ghost'}" onclick="navigate('privacy')">Πολιτική Απορρήτου (/privacy)</button>
+                            <button type="button" class="btn btn-sm ${tab==='terms' ? 'btn-sky' : 'btn-ghost'}" onclick="navigate('terms')">Όροι Χρήσης (/terms)</button>
+                        </div>
+                    </div>
+
+                    <div class="panel stack">
+                        <div>
+                            <span class="badge badge-emerald">GDPR (ΕΕ 2016/679) • Σελίδα ${esc(routePath)}</span>
+                            <h1 style="margin-top:10px;font-size:28px;">${tab === "privacy" ? "Πολιτική Απορρήτου &amp; Προστασία Δεδομένων" : "Όροι Χρήσης &amp; Πνευματικά Δικαιώματα"}</h1>
+                        </div>
+
+                        ${tab === "privacy" ? `
+                            <div class="stack-sm" style="font-size:13.5px;color:#cbd5e1;line-height:1.7;">
+                                <div class="sub-box">
+                                    <strong style="color:var(--emerald);">1. Ελαχιστοποίηση Δεδομένων &amp; Ανώνυμη Μελέτη Μαθητών:</strong><br>
+                                    Οι μαθητές περιηγούνται χωρίς δημιουργία λογαριασμού και χωρίς διαφημιστικούς trackers.
+                                </div>
+                                <div class="sub-box">
+                                    <strong style="color:var(--sky);">2. Δεδομένα Εκπαιδευτικών &amp; Συγκατάθεση:</strong><br>
+                                    Καταγράφονται τα στοιχεία εγγραφής, η χρονοσφραγίδα αποδοχής πολιτικής (<span class="mono">accepted_privacy_at</span>) και κρυπτογραφημένο hash κωδικού (ποτέ plain-text κωδικός).
+                                </div>
+                                <div class="sub-box">
+                                    <strong style="color:var(--amber);">3. Δικαίωμα Εξαγωγής &amp; Οριστικής Διαγραφής (Άρθρα 15 &amp; 17 GDPR):</strong><br>
+                                    Κάθε εκπαιδευτικός μπορεί εντός των Ρυθμίσεων Λογαριασμού του να εξάγει τα δεδομένα του σε <span class="mono">my-data.json</span> ή να προχωρήσει σε οριστική διαγραφή λογαριασμού.
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="stack-sm" style="font-size:13.5px;color:#cbd5e1;line-height:1.7;">
+                                <div class="sub-box">
+                                    <strong style="color:var(--sky);">1. Εκπαιδευτικός Χαρακτήρας:</strong><br>
+                                    Το <strong>KonStudy</strong> λειτουργεί ως ψηφιακό εργαλείο μελέτης και εκπαιδευτικής υποστήριξης για το Λύκειο.
+                                </div>
+                                <div class="sub-box">
+                                    <strong style="color:var(--emerald);">2. Πνευματικά Δικαιώματα Σχολικών Βιβλίων:</strong><br>
+                                    Δεν αναπαράγονται αρχεία βιβλίων εντός της εφαρμογής· παρέχονται σύνδεσμοι προς τους επίσημους πόρους του ΥΠΑΙΘΑ / ΙΤΥΕ «Διόφαντος» (<span class="mono">https://ebooks.edu.gr</span>).
+                                </div>
+                                <div class="sub-box">
+                                    <strong style="color:var(--amber);">3. Ασφαλής Χρήση &amp; Απαγόρευση Κατάχρησης:</strong><br>
+                                    Απαγορεύεται η καταχώρηση ευαίσθητων προσωπικών δεδομένων, κακόβουλων αρχείων ή αυτοματοποιημένων επιθέσεων/spam.
+                                </div>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDeleteAccountPageView() {
+            if (!state.currentTeacher) {
+                return renderTeacherView();
+            }
+            return `
+                <div class="stack view-enter" style="max-width:680px;margin:0 auto;">
+                    <div class="row-between">
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="navigate('teacher', { teacherTab: 'settings' })">← Πίσω στις Ρυθμίσεις Λογαριασμού</button>
+                    </div>
+                    <div class="panel stack" style="border-color:rgba(251,113,133,0.45);">
+                        <div>
+                            <span class="badge badge-rose">Άρθρο 17 GDPR • Δικαίωμα στη Λήθη</span>
+                            <h1 style="margin-top:10px;font-size:26px;">Οριστική Διαγραφή Λογαριασμού</h1>
+                        </div>
+                        <p class="muted" style="margin:0;font-size:13.5px;">
+                            Η ενέργεια αυτή διαγράφει οριστικά τον λογαριασμό σας και τις αναρτήσεις σας από τα αποθηκευμένα δεδομένα της εφαρμογής και δεν αναιρείται.
+                            Για επιβεβαίωση, πληκτρολογήστε ακριβώς <strong style="color:#fda4af;" class="mono">ΔΙΑΓΡΑΦΗ</strong>.
+                        </p>
+                        <input id="confirmDeletePhraseInp" type="text" placeholder="Πληκτρολογήστε ΔΙΑΓΡΑΦΗ">
+                        <div class="row" style="justify-content:flex-end;">
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="navigate('teacher', { teacherTab: 'settings' })">Ακύρωση</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="executeSelfAccountDeletion()">Οριστική Διαγραφή Τώρα</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function executeSelfAccountDeletion() {
+            const t = state.currentTeacher;
+            if (!t) return;
+            const phrase = (document.getElementById("confirmDeletePhraseInp")?.value || "").trim();
+            if (phrase !== "ΔΙΑΓΡΑΦΗ") {
+                showToast("Πληκτρολογήστε ΔΙΑΓΡΑΦΗ για επιβεβαίωση.");
+                return;
+            }
+            db.teachers = db.teachers.filter(item => item.id !== t.id);
+            db.classroomPosts = db.classroomPosts.filter(p => p.teacherName !== t.name);
+            saveAppData();
+            try { sessionStorage.clear(); } catch (e) {}
+            state.currentTeacher = null;
+            state.currentTeacherSessionVer = 0;
+            state.view = "teacher";
+            syncHashRoute("teacher");
+            logActivity(`Οριστική διαγραφή λογαριασμού εκπαιδευτικού (${t.email}).`, "ACCOUNT_DELETED", t.id);
+            showToast("Ο λογαριασμός και τα σχετικά δεδομένα διαγράφηκαν οριστικά.");
+            render();
+        }
+
+        // =====================================================================
+        // 6. CONSENT-GATED EMAILJS AUTOMATION
+        // =====================================================================
+        async function sendAutomatedEmail(toEmail, toName, subject, messageBody) {
+            if (state.cookieConsent !== "accepted") {
+                return false;
+            }
+            if (!checkRateLimit("email_send", 8)) {
+                showToast("Όριο αποστολής μηνυμάτων ανά λεπτό.");
+                return false;
+            }
+            const { emailjsServiceId, emailjsTemplateId, emailjsPublicKey } = db.integrations || {};
+            if (!emailjsServiceId || !emailjsTemplateId || !emailjsPublicKey) return false;
+            try {
+                if (!window.emailjs) {
+                    await new Promise((resolve, reject) => {
+                        const s = document.createElement("script");
+                        s.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+                        s.onload = resolve;
+                        s.onerror = reject;
+                        document.head.appendChild(s);
+                    });
+                }
+                if (window.emailjs) {
+                    emailjs.init({ publicKey: emailjsPublicKey });
+                    await emailjs.send(emailjsServiceId, emailjsTemplateId, {
+                        to_email: toEmail,
+                        to_name: toName,
+                        subject: subject,
+                        message: messageBody,
+                        verification_code: messageBody
+                    });
+                    logActivity(`Στάλθηκε αυτόματο email ασφαλείας στο ${toEmail}.`, "EMAIL_SENT", toEmail);
+                    return true;
+                }
+            } catch (err) {
+                logActivity(`Αποτυχία αποστολής email προς ${toEmail}.`, "EMAIL_FAIL", toEmail);
+            }
+            return false;
+        }
+
+        // =====================================================================
+        // 7. ROUTER
+        // =====================================================================
+        function render() {
+            enforceSessionTimeout();
+            renderCookieBanner();
+
+            document.querySelectorAll(".nav-btn").forEach(btn => {
+                const target = btn.getAttribute("data-nav");
+                const isActive =
+                    state.view === target ||
+                    (target === "home" && (state.view === "grade" || state.view === "course"));
+                btn.classList.toggle("active", isActive);
+            });
+
+            const root = document.getElementById("appRoot");
+            if (!root) return;
+
+            if (state.view === "home") root.innerHTML = renderHomeView();
+            else if (state.view === "grade") root.innerHTML = renderGradeView();
+            else if (state.view === "course") root.innerHTML = renderCourseView();
+            else if (state.view === "sections") root.innerHTML = renderSectionsView();
+            else if (state.view === "schedule") root.innerHTML = renderScheduleView();
+            else if (state.view === "exams") root.innerHTML = renderExamsView();
+            else if (state.view === "teacher") root.innerHTML = renderTeacherView();
+            else if (state.view === "admin") root.innerHTML = renderAdminView();
+            else if (state.view === "privacy") root.innerHTML = renderLegalPageView("privacy");
+            else if (state.view === "terms") root.innerHTML = renderLegalPageView("terms");
+            else if (state.view === "deleteAccount") root.innerHTML = renderDeleteAccountPageView();
+        }
+
+        // =====================================================================
+        // 8. HOME, GRADE & COURSE VIEWS
+        // =====================================================================
+        function renderHomeView() {
+            const grades = [
+                {
+                    name: "Α' Λυκείου",
+                    badge: "11 Μαθήματα",
+                    badgeClass: "badge",
+                    desc: "Θεμελίωση σε Άλγεβρα, Γεωμετρία, Φυσική, Χημεία, Βιολογία, Αρχαία, Έκφραση, Ιστορία, Πληροφορική & Αγγλικά."
+                },
+                {
+                    name: "Β' Λυκείου",
+                    badge: "10 Μαθήματα",
+                    badgeClass: "badge badge-indigo",
+                    desc: "Μαθήματα Γενικής Παιδείας & Ομάδων Προσανατολισμού (Μαθηματικά, Φυσική & Αρχαία Προσανατολισμού)."
+                },
+                {
+                    name: "Γ' Λυκείου",
+                    badge: "10 Μαθήματα • Πανελλαδικές",
+                    badgeClass: "badge badge-emerald",
+                    desc: "Πλήρης προετοιμασία Πανελλαδικών Εξετάσεων, επισημασμένα SOS, σημειώσεις & Quiz αυτοαξιολόγησης."
+                }
+            ];
+
+            const q = state.searchQuery.trim().toLowerCase();
+            const searchResults = q
+                ? db.courses.filter(c =>
+                    c.title.toLowerCase().includes(q) ||
+                    c.grade.toLowerCase().includes(q) ||
+                    c.category.toLowerCase().includes(q) ||
+                    c.units.some(u => u.toLowerCase().includes(q))
+                )
+                : [];
+
+            return `
+                <div class="stack view-enter">
+                    <section class="panel" style="padding: 32px;">
+                        <div class="stack" style="max-width: 800px; gap: 16px;">
+                            <div class="row">
+                                <span class="badge">${esc(db.schoolInfo.name)}</span>
+                                <span class="badge badge-emerald">Επίσημοι Σύνδεσμοι ebooks.edu.gr (HTTPS)</span>
+                            </div>
+                            <h1>Όλη η ύλη, τα διαδραστικά βιβλία &amp; τα εργαλεία του Λυκείου σε ένα ασφαλές περιβάλλον.</h1>
+                            <p class="muted" style="margin:0; font-size: 14.5px;">
+                                Άμεση πρόσβαση στα <strong style="color:#fff;">31 μαθήματα Α', Β' &amp; Γ' Λυκείου</strong>, επίσημες καρτέλες βιβλίων Διόφαντος (HTML &amp; PDF), επισημασμένα SOS, ψηφιακά τμήματα Α1–Γ3 και γεννήτρια διαγωνισμάτων Α4 PDF.
+                            </p>
+
+                            <div class="row" style="padding-top: 6px;">
+                                <div style="flex: 1 1 280px;">
+                                    <input type="text" value="${esc(state.searchQuery)}" oninput="state.searchQuery=this.value; render();" placeholder="Αναζήτηση μαθήματος ή κεφαλαίου (π.χ. Άλγεβρα, Bolzano, Φυσική Γ')...">
+                                </div>
+                                <button type="button" class="btn btn-sky" onclick="navigate('exams')">
+                                    ${SVG.file}
+                                    <span>Δημιουργία Διαγωνίσματος PDF</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    ${q ? `
+                        <section class="stack-sm">
+                            <div class="row-between">
+                                <h2 style="font-size:16px; color:var(--sky);">Αποτελέσματα Αναζήτησης (${searchResults.length})</h2>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="state.searchQuery=''; render();">Καθαρισμός</button>
+                            </div>
+                            <div class="grid-3">
+                                ${searchResults.map(c => renderCourseCard(c)).join("") || `<div class="panel muted" style="font-size:13px;">Δεν βρέθηκαν μαθήματα για «${esc(state.searchQuery)}».</div>`}
+                            </div>
+                        </section>
+                    ` : ""}
+
+                    <section class="stack-sm">
+                        <div class="row-between">
+                            <h2>Επίλεξε Τάξη Λυκείου</h2>
+                            <span class="mono muted" style="font-size:12px;">31 ΜΑΘΗΜΑΤΑ</span>
+                        </div>
+                        <div class="grid-3">
+                            ${grades.map(g => `
+                                <div class="panel panel-interactive" style="display:flex;flex-direction:column;justify-content:space-between;gap:20px;cursor:pointer;" onclick="navigate('grade', { selectedGrade: '${g.name.replace(/'/g, "\\'")}' })">
+                                    <div class="stack-sm">
+                                        <div><span class="${g.badgeClass}">${g.badge}</span></div>
+                                        <h3 style="font-size:20px;">${g.name}</h3>
+                                        <p class="muted" style="margin:0;font-size:13px;">${g.desc}</p>
+                                    </div>
+                                    <div class="row" style="color:var(--sky);font-size:13px;font-weight:800;">
+                                        <span>Προβολή Μαθημάτων</span>
+                                        ${SVG.arrow}
+                                    </div>
+                                </div>
+                            `).join("")}
+                        </div>
+                    </section>
+
+                    <section class="grid-3">
+                        <div class="panel panel-interactive row" style="cursor:pointer;" onclick="navigate('sections')">
+                            <div class="sub-box" style="padding:12px;color:var(--emerald);">${SVG.users}</div>
+                            <div>
+                                <h3>Ψηφιακά Τμήματα Α1–Γ3</h3>
+                                <div class="muted" style="font-size:12px;">Ασκήσεις &amp; ανακοινώσεις ανά τμήμα</div>
+                            </div>
+                        </div>
+                        <div class="panel panel-interactive row" style="cursor:pointer;" onclick="navigate('schedule')">
+                            <div class="sub-box" style="padding:12px;color:var(--amber);">${SVG.calendar}</div>
+                            <div>
+                                <h3>Ωρολόγιο Πρόγραμμα</h3>
+                                <div class="muted" style="font-size:12px;">Εβδομαδιαίο πρόγραμμα 9 τμημάτων</div>
+                            </div>
+                        </div>
+                        <div class="panel panel-interactive row" style="cursor:pointer;" onclick="navigate('teacher')">
+                            <div class="sub-box" style="padding:12px;color:var(--indigo);">${SVG.grad}</div>
+                            <div>
+                                <h3>Πύλη Εκπαιδευτικών</h3>
+                                <div class="muted" style="font-size:12px;">AI Εντολέας, Οδηγός, Ύλη &amp; Ρυθμίσεις</div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            `;
+        }
+
+        function renderCourseCard(c) {
+            return `
+                <div class="panel panel-interactive" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;">
+                    <div class="stack-sm" style="gap:8px;">
+                        <div class="row-between">
+                            <span class="badge">${esc(c.grade)}</span>
+                            <span class="muted">${SVG.book}</span>
+                        </div>
+                        <h3>${esc(c.title)}</h3>
+                        <div class="muted" style="font-size:12px;">${esc(c.category)} • ${c.units.length} Ενότητες</div>
+                    </div>
+                    <div class="row" style="padding-top:12px;border-top:1px solid var(--border);">
+                        <button type="button" class="btn btn-soft-sky btn-sm" style="flex:1;" onclick="navigate('course', { selectedCourseId: '${c.id}' })">
+                            Ύλη &amp; SOS
+                        </button>
+                        <a class="btn btn-ghost btn-sm" href="${esc(c.bookUrl)}" target="_blank" rel="noopener noreferrer">
+                            Βιβλίο ↗
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGradeView() {
+            const list = db.courses.filter(c => c.grade === state.selectedGrade);
+            const classPortalUrl = DIOPHANTUS_CLASS_PORTALS[state.selectedGrade] || "https://ebooks.edu.gr/ebooks/v2/allcourses.jsp";
+            return `
+                <div class="stack view-enter">
+                    <div class="row-between">
+                        <div class="row">
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="navigate('home')">← Πίσω</button>
+                            <div>
+                                <h2>${esc(state.selectedGrade)}</h2>
+                                <div class="muted" style="font-size:12px;">${list.length} μαθήματα με ύλη, SOS &amp; επίσημα βιβλία Διόφαντος</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            ${["Α' Λυκείου", "Β' Λυκείου", "Γ' Λυκείου"].map(g => `
+                                <button type="button" class="btn btn-sm ${state.selectedGrade===g ? 'btn-sky' : 'btn-ghost'}" onclick="state.selectedGrade='${g.replace(/'/g, "\\'")}'; render();">${g}</button>
+                            `).join("")}
+                            <a class="btn btn-soft-sky btn-sm" href="${esc(classPortalUrl)}" target="_blank" rel="noopener noreferrer">Όλα τα Βιβλία ${esc(state.selectedGrade)} ↗</a>
+                        </div>
+                    </div>
+
+                    <div class="grid-3">
+                        ${list.map(c => renderCourseCard(c)).join("")}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCourseView() {
+            const c = db.courses.find(x => x.id === state.selectedCourseId) || db.courses[0];
+            const classPortalUrl = DIOPHANTUS_CLASS_PORTALS[c.grade] || "https://ebooks.edu.gr/ebooks/v2/allcourses.jsp";
+            const doneCount = c.units.filter((_, i) => state.completedUnits[`${c.id}_${i}`]).length;
+
+            return `
+                <div class="stack view-enter">
+                    <div class="row-between">
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="navigate('grade', { selectedGrade: '${c.grade.replace(/'/g, "\\'")}' })">
+                            ← Όλα τα μαθήματα (${esc(c.grade)})
+                        </button>
+                        <div class="row">
+                            <a class="btn btn-sky btn-sm" href="${esc(c.bookUrl)}" target="_blank" rel="noopener noreferrer">
+                                Επίσημο Βιβλίο (HTML &amp; PDF) ↗
+                            </a>
+                            <a class="btn btn-soft-sky btn-sm" href="${esc(classPortalUrl)}" target="_blank" rel="noopener noreferrer">
+                                Κατάλογος Τάξης ↗
+                            </a>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="navigate('exams', { examCourseId: '${c.id}', examDraft: null, examApprovedForPdf: false })">
+                                Διαγώνισμα PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="panel stack">
+                        <div class="row-between">
+                            <div>
+                                <span class="badge">${esc(c.grade)} • ${esc(c.category)}</span>
+                                <h1 style="font-size:28px;margin-top:10px;">${esc(c.title)}</h1>
+                            </div>
+                            <div class="sub-box" style="padding:10px 14px;">
+                                <div class="muted" style="font-size:11px;">Πρόοδος Μελέτης</div>
+                                <div style="font-size:15px;font-weight:800;color:var(--emerald);">${doneCount} / ${c.units.length} Ενότητες</div>
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="sub-box stack-sm">
+                                <div class="row-between">
+                                    <h3 style="color:var(--sky);">Ενότητες &amp; Κεφάλαια Ύλης</h3>
+                                    <span class="muted" style="font-size:11px;">Πάτα για τσεκάρισμα</span>
+                                </div>
+                                ${c.units.map((u, idx) => {
+                                    const isDone = !!state.completedUnits[`${c.id}_${idx}`];
+                                    return `
+                                        <div onclick="toggleUnitProgress('${c.id}', ${idx})" class="row" style="padding:10px 12px;border-radius:11px;cursor:pointer;background:${isDone ? 'rgba(52,211,153,0.12)' : 'rgba(15,23,42,0.85)'};border:1px solid ${isDone ? 'rgba(52,211,153,0.4)' : 'var(--border)'};font-size:13px;">
+                                            <span class="mono badge ${isDone ? 'badge-emerald' : ''}" style="padding:2px 8px;">${isDone ? '✓' : idx + 1}</span>
+                                            <span style="${isDone ? 'text-decoration:line-through;color:#94a3b8;' : ''}">${esc(u)}</span>
+                                        </div>
+                                    `;
+                                }).join("")}
+                            </div>
+
+                            <div class="stack-sm">
+                                <div class="sub-box stack-sm" style="border-color:rgba(251,191,36,0.35);background:rgba(251,191,36,0.06);">
+                                    <h3 style="color:var(--amber);">Σημεία SOS Εξετάσεων</h3>
+                                    <p style="margin:0;font-size:13px;white-space:pre-line;">${esc(c.sos || "Δεν έχουν καταχωρηθεί ακόμα SOS.")}</p>
+                                </div>
+
+                                ${c.notes ? `
+                                    <div class="sub-box stack-sm" style="border-color:rgba(52,211,153,0.35);background:rgba(52,211,153,0.06);">
+                                        <h3 style="color:var(--emerald);">Σημειώσεις Καθηγητή</h3>
+                                        <p style="margin:0;font-size:13px;white-space:pre-line;">${esc(c.notes)}</p>
+                                    </div>
+                                ` : ""}
+
+                                ${c.photo ? `
+                                    <div class="sub-box stack-sm">
+                                        <h3 style="color:var(--sky);font-size:13px;">Φωτογραφία Πίνακα / Σημειώσεων</h3>
+                                        <img src="${c.photo}" alt="Σημειώσεις" style="width:100%;max-height:260px;object-fit:contain;border-radius:10px;">
+                                    </div>
+                                ` : ""}
+                            </div>
+                        </div>
+
+                        ${c.quiz && c.quiz.length > 0 ? `
+                            <div class="sub-box stack-sm">
+                                <h3 style="color:var(--indigo);">Quiz Αυτοαξιολόγησης</h3>
+                                ${c.quiz.map((item, qIdx) => `
+                                    <div class="stack-sm" style="padding:12px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid var(--border);">
+                                        <div style="font-size:13px;font-weight:700;">${qIdx + 1}. ${esc(item.q)}</div>
+                                        <div class="grid-2" style="gap:8px;">
+                                            ${item.options.map((opt, oIdx) => `
+                                                <button type="button" class="btn btn-ghost btn-sm" style="justify-content:flex-start;" onclick="checkQuizAnswer(this, ${oIdx === item.answer})">
+                                                    ${esc(opt)}
+                                                </button>
+                                            `).join("")}
+                                        </div>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        ` : ""}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkQuizAnswer(btn, isCorrect) {
+            if (isCorrect) {
+                btn.style.background = "rgba(52, 211, 153, 0.2)";
+                btn.style.borderColor = "#34d399";
+                btn.style.color = "#6ee7b7";
+                showToast("Σωστή απάντηση!");
+            } else {
+                btn.style.background = "rgba(251, 113, 133, 0.2)";
+                btn.style.borderColor = "#fb7185";
+                btn.style.color = "#fda4af";
+                showToast("Λάθος απάντηση, δοκιμάστε ξανά.");
+            }
+        }
+
+        // =====================================================================
+        // 9. DIGITAL CLASSROOM SECTIONS (Α1–Γ3)
+        // =====================================================================
+        function renderSectionsView() {
+            const posts = state.unlockedSection
+                ? db.classroomPosts.filter(p => p.sections.includes(state.unlockedSection))
+                : [];
+
+            return `
+                <div class="stack view-enter">
+                    <div class="panel stack-sm">
+                        <div><span class="badge badge-emerald">Ψηφιακές Τάξεις</span></div>
+                        <h2>Τμήματα Α1 – Γ3</h2>
+                        <p class="muted" style="margin:0;font-size:13px;">Επιλέξτε το τμήμα σας και εισάγετε τον κωδικό πρόσβασης του τμήματος (π.χ. <span class="mono">A1-2026</span>).</p>
+
+                        <div class="grid-3" style="max-width:720px;padding-top:6px;">
+                            <select onchange="state.selectedSectionInput=this.value">
+                                ${SECTIONS_LIST.map(s => `<option value="${s}" ${state.selectedSectionInput===s ? "selected" : ""}>Τμήμα ${s}</option>`).join("")}
+                            </select>
+                            <input id="secPassInp" type="password" onkeydown="if(event.key==='Enter') unlockStudentSection()" placeholder="Κωδικός Τμήματος">
+                            <button type="button" class="btn btn-emerald" onclick="unlockStudentSection()">Είσοδος στο Τμήμα</button>
+                        </div>
+                    </div>
+
+                    ${state.unlockedSection ? `
+                        <div class="stack-sm">
+                            <div class="row-between">
+                                <h2 style="color:var(--emerald);">Αναρτήσεις Τμήματος ${esc(state.unlockedSection)}</h2>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="state.unlockedSection=null; render();">Έξοδος</button>
+                            </div>
+                            ${posts.map(p => `
+                                <div class="panel stack-sm" style="padding:18px;">
+                                    <div class="row-between" style="font-size:12px;">
+                                        <strong style="color:var(--sky);">${esc(p.courseTitle)} • ${esc(p.teacherName)}</strong>
+                                        <span class="muted">${esc(p.date)}</span>
+                                    </div>
+                                    <p style="margin:0;font-size:13.5px;white-space:pre-line;">${esc(p.text)}</p>
+                                </div>
+                            `).join("") || `<div class="panel muted" style="font-size:13px;">Δεν υπάρχουν ακόμα αναρτήσεις για το τμήμα ${esc(state.unlockedSection)}.</div>`}
+                        </div>
+                    ` : ""}
+                </div>
+            `;
+        }
+
+        function unlockStudentSection() {
+            const sec = state.selectedSectionInput;
+            const code = (document.getElementById("secPassInp")?.value || "").trim();
+            if (db.sectionCodes[sec] && db.sectionCodes[sec].toLowerCase() === code.toLowerCase()) {
+                state.unlockedSection = sec;
+                showToast(`Είσοδος στο Τμήμα ${sec}.`);
+                render();
+            } else {
+                showToast("Λάθος κωδικός τμήματος.");
+            }
+        }
+
+        // =====================================================================
+        // 10. WEEKLY SCHEDULE VIEW
+        // =====================================================================
+        function renderScheduleView() {
+            const sec = state.scheduleSection;
+            const table = db.schedule[sec] || {};
+            return `
+                <div class="stack view-enter">
+                    <div class="panel stack">
+                        <div class="row-between">
+                            <div>
+                                <h2>Ωρολόγιο Πρόγραμμα</h2>
+                                <div class="muted" style="font-size:12px;">Εβδομαδιαίο πρόγραμμα 7 διδακτικών ωρών ανά τμήμα</div>
+                            </div>
+                            <div class="row" style="gap:6px;">
+                                ${SECTIONS_LIST.map(s => `
+                                    <button type="button" class="btn btn-sm ${sec===s ? 'btn-sky' : 'btn-ghost'}" onclick="state.scheduleSection='${s}'; render();">${s}</button>
+                                `).join("")}
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ώρα</th>
+                                        ${DAYS_LIST.map(d => `<th>${d}</th>`).join("")}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${[0,1,2,3,4,5,6].map(hourIdx => `
+                                        <tr>
+                                            <td class="mono" style="color:var(--amber);font-weight:800;">${hourIdx + 1}η</td>
+                                            ${DAYS_LIST.map(day => `
+                                                <td>${esc((table[day] && table[day][hourIdx]) || "—")}</td>
+                                            `).join("")}
+                                        </tr>
+                                    `).join("")}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // =====================================================================
+        // 11. 10-LEVEL EXAM GENERATOR -> EDITABLE THEMES -> OFFICIAL A4 PDF
+        // =====================================================================
+        const DIFFICULTY_META = {
+            1: { label: "1/10 — Πανεύκολο (Εισαγωγικό)", desc: "Βασικοί ορισμοί, απλή αναγνώριση και άμεσες εφαρμογές 1 βήματος.", color: "#34d399" },
+            2: { label: "2/10 — Πολύ Εύκολο", desc: "Απλές ασκήσεις κατανόησης βασικών τύπων και κανόνων.", color: "#34d399" },
+            3: { label: "3/10 — Εύκολο (Εμπέδωσης)", desc: "Ασκήσεις εμπέδωσης σχολικού βιβλίου χωρίς παγίδες.", color: "#2dd4bf" },
+            4: { label: "4/10 — Βασικό Σχολικό", desc: "Τυπικό ωριαίο τεστ με 1-2 μικρές παραλλαγές.", color: "#38bdf8" },
+            5: { label: "5/10 — Κλασικό Διαγώνισμα", desc: "Ισορροπημένο διαγώνισμα τράπεζας θεμάτων (Θέματα Α, Β, Γ, Δ).", color: "#38bdf8" },
+            6: { label: "6/10 — Ενισχυμένο", desc: "Συνδυασμός δύο ενοτήτων και κριτικές ερωτήσεις αιτιολόγησης.", color: "#818cf8" },
+            7: { label: "7/10 — Απαιτητικό", desc: "Αυξημένη δυσκολία, παραμετρικά ερωτήματα και σύνθετες αποδείξεις.", color: "#a78bfa" },
+            8: { label: "8/10 — Πολύ Δύσκολο", desc: "Υψηλού επιπέδου συνδυαστικά θέματα προετοιμασίας εξετάσεων.", color: "#c084fc" },
+            9: { label: "9/10 — Προσομοίωση Πανελλαδικών", desc: "Πλήρης προσομοίωση Πανελλαδικών Εξετάσεων με απαιτητικό Θέμα Δ.", color: "#fbbf24" },
+            10: { label: "10/10 — Ολυμπιακό / Άριστοι", desc: "Κορυφαίο επίπεδο για διαγωνισμούς & αριστούχους.", color: "#fb7185" }
+        };
+
+        function renderExamsView() {
+            const c = db.courses.find(x => x.id === state.examCourseId) || db.courses[0];
+            const diffInfo = DIFFICULTY_META[state.examDifficulty] || DIFFICULTY_META[5];
+
+            return `
+                <div class="stack view-enter">
+                    <div class="panel stack no-print">
+                        <div>
+                            <span class="badge badge-amber">Εργαστήριο Διαγωνισμάτων • 10 Επίπεδα</span>
+                            <h2 style="margin-top:10px;">Δημιουργία Διαγωνίσματος &amp; Εξαγωγή PDF</h2>
+                            <p class="muted" style="margin:4px 0 0;font-size:13px;">Επιλέξτε μάθημα και επίπεδο δυσκολίας (1–10), επεξεργαστείτε τις προτάσεις θεμάτων και πατήστε <strong style="color:#fff;">«Ναι»</strong> για έτοιμο φύλλο Α4 PDF.</p>
+                        </div>
+
+                        <div class="grid-3">
+                            <div>
+                                <label class="field-label">1. Μάθημα</label>
+                                <select onchange="state.examCourseId=this.value; state.examDraft=null; state.examApprovedForPdf=false; render();">
+                                    ${db.courses.map(item => `<option value="${item.id}" ${item.id===c.id ? "selected" : ""}>${esc(item.title)}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="field-label">2. Εστίαση Ύλης (Προαιρετικό)</label>
+                                <input type="text" value="${esc(state.examTopicFocus)}" oninput="state.examTopicFocus=this.value" placeholder="π.χ. ${esc(c.units[0] || 'Όλη η ύλη')}">
+                            </div>
+                            <div>
+                                <label class="field-label">3. Διάρκεια</label>
+                                <select onchange="state.examDuration=this.value">
+                                    ${["45 λεπτά (Ωριαίο)", "1 ώρα & 30 λεπτά", "2 ώρες", "3 ώρες (Πανελλαδικών)"].map(d => `<option value="${d}" ${state.examDuration===d ? "selected" : ""}>${d}</option>`).join("")}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="sub-box stack-sm">
+                            <div class="row-between">
+                                <span style="font-size:12.5px;font-weight:700;color:#cbd5e1;">4. Βαθμός Δυσκολίας (1 έως 10):</span>
+                                <span style="font-size:13.5px;font-weight:800;color:${diffInfo.color};">${diffInfo.label}</span>
+                            </div>
+                            <div class="grid-10">
+                                ${[1,2,3,4,5,6,7,8,9,10].map(lvl => `
+                                    <button type="button" class="btn btn-sm mono ${state.examDifficulty === lvl ? 'btn-sky' : 'btn-ghost'}" onclick="state.examDifficulty=${lvl}; render();">${lvl}</button>
+                                `).join("")}
+                            </div>
+                            <div class="muted" style="font-size:12px;">${diffInfo.desc}</div>
+                        </div>
+
+                        <div>
+                            <button type="button" class="btn btn-sky" onclick="generateAiExamIdeas(false)">
+                                Δημιουργία Προτάσεων Θεμάτων
+                            </button>
+                        </div>
+                    </div>
+
+                    ${state.examDraft ? `
+                        <div class="panel stack no-print" style="border-color:rgba(56,189,248,0.4);">
+                            <div class="row-between" style="border-bottom:1px solid var(--border);padding-bottom:14px;">
+                                <div>
+                                    <span class="badge">Βήμα 2 • Επεξεργασία Εκφωνήσεων</span>
+                                    <h3 style="margin-top:8px;">Προτεινόμενα Θέματα (Ελεύθερη Τροποποίηση)</h3>
+                                </div>
+                                <button type="button" class="btn btn-soft-sky btn-sm" onclick="generateAiExamIdeas(true)">
+                                    Εναλλακτική Πρόταση
+                                </button>
+                            </div>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label class="field-label" style="color:var(--sky);">ΘΕΜΑ Α (Θεωρία / Σωστό-Λάθος)</label>
+                                    <textarea rows="5" oninput="state.examDraft.themeA=this.value">${esc(state.examDraft.themeA)}</textarea>
+                                </div>
+                                <div>
+                                    <label class="field-label" style="color:var(--indigo);">ΘΕΜΑ Β (Εφαρμογή &amp; Αιτιολόγηση)</label>
+                                    <textarea rows="5" oninput="state.examDraft.themeB=this.value">${esc(state.examDraft.themeB)}</textarea>
+                                </div>
+                                <div>
+                                    <label class="field-label" style="color:var(--amber);">ΘΕΜΑ Γ (Κύρια Άσκηση)</label>
+                                    <textarea rows="5" oninput="state.examDraft.themeC=this.value">${esc(state.examDraft.themeC)}</textarea>
+                                </div>
+                                <div>
+                                    <label class="field-label" style="color:var(--emerald);">ΘΕΜΑ Δ (Συνδυαστικό)</label>
+                                    <textarea rows="5" oninput="state.examDraft.themeD=this.value">${esc(state.examDraft.themeD)}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="sub-box row-between" style="border-color:rgba(52,211,153,0.35);background:rgba(52,211,153,0.08);">
+                                <div style="font-size:13px;color:#a7f3d0;">
+                                    Συμφωνείτε με τα θέματα; Πατήστε <strong>«Ναι»</strong> για να παραχθεί το επίσημο φύλλο Α4 PDF.
+                                </div>
+                                <button type="button" class="btn btn-emerald" onclick="state.examApprovedForPdf=true; render(); showToast('Το διαγώνισμα εγκρίθηκε! Πατήστε Εκτύπωση / Αποθήκευση PDF.');">
+                                    Ναι, Συνέχεια σε PDF
+                                </button>
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.examDraft && state.examApprovedForPdf ? `
+                        <div id="examPrintSheet" class="stack">
+                            <div class="row-between" style="border-bottom:2px solid #0f172a;padding-bottom:16px;">
+                                <div>
+                                    <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;color:#475569;">${esc(db.schoolInfo.name)} • ΣΧΟΛΙΚΟ ΕΤΟΣ 2026</div>
+                                    <h2 style="color:#0f172a;margin-top:4px;">ΔΙΑΓΩΝΙΣΜΑ: ${esc(c.title)}</h2>
+                                    <div style="font-size:12px;font-weight:700;color:#334155;margin-top:4px;">
+                                        Επίπεδο Δυσκολίας: ${esc(diffInfo.label)} • Διάρκεια: ${esc(state.examDuration)}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn no-print" style="background:#0f172a;color:#fff;" onclick="window.print()">
+                                    Εκτύπωση / Αποθήκευση ως PDF
+                                </button>
+                            </div>
+
+                            <div class="grid-2" style="font-size:12.5px;font-weight:700;border-bottom:1px solid #cbd5e1;padding-bottom:14px;">
+                                <div>Ονοματεπώνυμο Μαθητή/τριας: ____________________________________</div>
+                                <div>Τμήμα: __________ &nbsp;&nbsp; Ημερομηνία: ____ / ____ / 2026</div>
+                            </div>
+
+                            <div class="stack" style="font-size:14px;line-height:1.65;">
+                                <div>
+                                    <h3 style="color:#0f172a;text-decoration:underline;">ΘΕΜΑ Α (25 Μονάδες)</h3>
+                                    <p style="margin:6px 0 0;white-space:pre-line;">${esc(state.examDraft.themeA)}</p>
+                                </div>
+                                <div>
+                                    <h3 style="color:#0f172a;text-decoration:underline;">ΘΕΜΑ Β (25 Μονάδες)</h3>
+                                    <p style="margin:6px 0 0;white-space:pre-line;">${esc(state.examDraft.themeB)}</p>
+                                </div>
+                                <div>
+                                    <h3 style="color:#0f172a;text-decoration:underline;">ΘΕΜΑ Γ (25 Μονάδες)</h3>
+                                    <p style="margin:6px 0 0;white-space:pre-line;">${esc(state.examDraft.themeC)}</p>
+                                </div>
+                                <div>
+                                    <h3 style="color:#0f172a;text-decoration:underline;">ΘΕΜΑ Δ (25 Μονάδες)</h3>
+                                    <p style="margin:6px 0 0;white-space:pre-line;">${esc(state.examDraft.themeD)}</p>
+                                </div>
+                            </div>
+
+                            <div style="border-top:1px solid #cbd5e1;padding-top:14px;text-align:center;font-size:12px;font-weight:800;color:#475569;">
+                                ΚΑΛΗ ΕΠΙΤΥΧΙΑ! • KonStudy
+                            </div>
+                        </div>
+                    ` : ""}
+                </div>
+            `;
+        }
+
+        function generateAiExamIdeas(isAlternative) {
+            if (!checkRateLimit("exam_gen", 12)) {
+                showToast("Πολλά αιτήματα ανά λεπτό. Δοκιμάστε ξανά σε λίγο.");
+                return;
+            }
+            const c = db.courses.find(x => x.id === state.examCourseId) || db.courses[0];
+            const lvl = state.examDifficulty;
+            const focus = state.examTopicFocus.trim() || c.units.slice(0, 2).join(" & ");
+            const variant = isAlternative ? " (Εναλλακτική Εκδοχή)" : "";
+
+            const complexityPhrase =
+                lvl <= 3 ? "βασικού επιπέδου εμπέδωσης με σαφή βήματα" :
+                lvl <= 6 ? "κλασικού σχολικού επιπέδου με κριτική αιτιολόγηση" :
+                lvl <= 8 ? "αυξημένης δυσκολίας με παραμετρικά ερωτήματα" :
+                           "επιπέδου Πανελλαδικών / Ολυμπιακών απαιτήσεων";
+
+            state.examDraft = {
+                themeA: `Α1. Να διατυπώσετε τους βασικούς ορισμούς και τα θεωρήματα που αφορούν την ενότητα: «${focus}»${variant}.\nΑ2. Να χαρακτηρίσετε τις παρακάτω 5 προτάσεις ως Σωστές (Σ) ή Λανθασμένες (Λ), αιτιολογώντας συνοπτικά την απάντησή σας (επίπεδο δυσκολίας ${lvl}/10).`,
+                themeB: `Β1. Ερώτημα εφαρμογής ${complexityPhrase} πάνω στην ύλη «${focus}».\nΒ2. Να συγκρίνετε δύο βασικές περιπτώσεις του φαινομένου/θεωρήματος και να εξηγήσετε πώς μεταβάλλεται το αποτέλεσμα όταν διπλασιαστεί η βασική παράμετρος.`,
+                themeC: `Κύρια άσκηση ${complexityPhrase} στη θεματική «${focus}»:\nΓ1. Να υπολογίσετε τα βασικά μεγέθη εκκίνησης.\nΓ2. Να αποδείξετε τη ζητούμενη σχέση σε γενική μορφή.\nΓ3. Να βρείτε τις ακραίες τιμές για τις οποίες ισχύει η συνθήκη του προβλήματος.`,
+                themeD: `Συνδυαστικό πρόβλημα κλιμακούμενης δυσκολίας (${lvl}/10) που συνδέει το «${focus}» με τις υπόλοιπες ενότητες του μαθήματος (${c.title}):\nΔ1. Εισαγωγικό ερώτημα μοντελοποίησης.\nΔ2. Ενδιάμεσος υπολογισμός και διερεύνηση.\nΔ3. Τελικό συνθετικό ερώτημα διάκρισης.`
+            };
+            state.examApprovedForPdf = false;
+            showToast("Δημιουργήθηκαν προτάσεις θεμάτων. Μπορείτε να τις επεξεργαστείτε.");
+            render();
+        }
+
+        // =====================================================================
+        // 12. TEACHER PORTAL (GDPR Sign Up, Settings/Export/Delete, Syllabus)
+        // =====================================================================
+        function syncSignupSubmitState() {
+            const btn = document.getElementById("regSubmitBtn");
+            const chk = document.getElementById("regTGdprCheck");
+            if (btn && chk) {
+                btn.disabled = !chk.checked;
+            }
+        }
+
+        function renderTeacherView() {
+            if (!state.currentTeacher) {
+                return `
+                    <div style="max-width:650px;margin:0 auto;" class="view-enter">
+                        <div class="panel stack">
+                            <div class="row-between" style="border-bottom:1px solid var(--border);padding-bottom:16px;">
+                                <div>
+                                    <span class="badge">Πύλη Εκπαιδευτικών</span>
+                                    <h2 style="margin-top:8px;">Σύνδεση ή Εγγραφή Καθηγητή</h2>
+                                </div>
+                                <div class="row" style="gap:6px;">
+                                    <button type="button" class="btn btn-sm ${state.teacherAuthMode==='login' ? 'btn-sky' : 'btn-ghost'}" onclick="state.teacherAuthMode='login'; render();">Σύνδεση</button>
+                                    <button type="button" class="btn btn-sm ${state.teacherAuthMode==='register' ? 'btn-sky' : 'btn-ghost'}" onclick="state.teacherAuthMode='register'; render();">Εγγραφή</button>
+                                </div>
+                            </div>
+
+                            ${state.teacherAuthMode === "login" ? `
+                                <div class="stack-sm">
+                                    <input id="loginHpField" class="hp-field" type="text" tabindex="-1" autocomplete="off">
+                                    <div>
+                                        <label class="field-label">Email Εκπαιδευτικού</label>
+                                        <input id="loginTEmail" type="email" placeholder="teacher@school.gr">
+                                    </div>
+                                    <div>
+                                        <label class="field-label">Κωδικός Πρόσβασης</label>
+                                        <input id="loginTPass" type="password" onkeydown="if(event.key==='Enter') loginTeacher()" placeholder="••••••••••">
+                                    </div>
+                                    <button type="button" class="btn btn-sky" style="width:100%;" onclick="loginTeacher()">Είσοδος στην Πύλη Καθηγητών</button>
+                                    <div class="muted" style="font-size:12px;text-align:center;">
+                                        Κάθε νέος λογαριασμός επιβεβαιώνεται πρώτα από τον Διαχειριστή πριν την ενεργοποίηση.
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="stack-sm">
+                                    <input id="regHpField" class="hp-field" type="text" tabindex="-1" autocomplete="off">
+                                    <div class="grid-2">
+                                        <div>
+                                            <label class="field-label">Ονοματεπώνυμο</label>
+                                            <input id="regTName" type="text" placeholder="π.χ. Μαρία Παπαδοπούλου">
+                                        </div>
+                                        <div>
+                                            <label class="field-label">Ειδικότητα (ΠΕ)</label>
+                                            <input id="regTSpec" type="text" placeholder="π.χ. ΠΕ03 Μαθηματικός">
+                                        </div>
+                                    </div>
+                                    <div class="grid-2">
+                                        <div>
+                                            <label class="field-label">Email</label>
+                                            <input id="regTEmail" type="email" placeholder="email@example.gr">
+                                        </div>
+                                        <div>
+                                            <label class="field-label">Κωδικός (τουλ. 10 χαρακτήρες, πεζά/ΚΕΦΑΛΑΙΑ/αριθμός)</label>
+                                            <input id="regTPass" type="password" placeholder="π.χ. Math2026Secure">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="field-label" style="color:var(--sky);">Επιλέξτε τα Μαθήματα της Ειδικότητάς σας:</label>
+                                        <div class="sub-box grid-2" style="max-height:175px;overflow-y:auto;gap:8px;padding:12px;">
+                                            ${db.courses.map(c => `
+                                                <label class="row" style="font-size:12px;cursor:pointer;gap:8px;">
+                                                    <input type="checkbox" name="regTAllowed" value="${c.id}" style="width:auto;">
+                                                    <span>${esc(c.title)}</span>
+                                                </label>
+                                            `).join("")}
+                                        </div>
+                                    </div>
+
+                                    <div class="sub-box" style="border-color:rgba(52,211,153,0.32);background:rgba(52,211,153,0.06);">
+                                        <label class="row" style="align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:#cbd5e1;">
+                                            <input id="regTGdprCheck" type="checkbox" onchange="syncSignupSubmitState()" style="width:auto;margin-top:3px;">
+                                            <span>
+                                                Διάβασα και αποδέχομαι την
+                                                <button type="button" class="link-btn" onclick="openLegalPage('privacy')">Πολιτική Απορρήτου</button>
+                                                και τους
+                                                <button type="button" class="link-btn" onclick="openLegalPage('terms')">Όρους Χρήσης</button>.
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <button id="regSubmitBtn" type="button" class="btn btn-emerald" style="width:100%;" disabled onclick="registerSelfTeacher()">Εγγραφή</button>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }
+
+            const t = db.teachers.find(x => x.id === state.currentTeacher.id) || state.currentTeacher;
+            if ((t.sessionVersion || 1) !== state.currentTeacherSessionVer) {
+                state.currentTeacher = null;
+                showToast("Η συνεδρία ακυρώθηκε λόγω αλλαγής κωδικού.");
+                return renderTeacherView();
+            }
+
+            const myCourses = db.courses.filter(c => t.allowedCourseIds.includes(c.id));
+            if (!state.selectedEditCourseId || !myCourses.some(c => c.id === state.selectedEditCourseId)) {
+                state.selectedEditCourseId = myCourses[0]?.id || db.courses[0].id;
+            }
+            const editCourse = db.courses.find(c => c.id === state.selectedEditCourseId) || myCourses[0];
+
+            return `
+                <div class="stack view-enter">
+                    <div class="panel row-between">
+                        <div>
+                            <div class="row">
+                                <span class="badge badge-emerald">Εγκεκριμένος Εκπαιδευτικός</span>
+                                <span class="badge">${esc(t.specialty)}</span>
+                            </div>
+                            <h2 style="margin-top:8px;">Καλώς ήρθατε, ${esc(t.name)}</h2>
+                            <div class="muted" style="font-size:12px;">Μαθήματα ειδικότητας: ${myCourses.map(c => esc(c.title)).join(", ")}</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="sub-box" style="padding:12px 16px;border-color:rgba(56,189,248,0.32);background:rgba(56,189,248,0.08);">
+                                <div style="font-size:12px;font-weight:800;color:var(--sky);">Ερωτήσεις, Απορίες &amp; Πρόσθετα / Αλλαγές:</div>
+                                <div class="mono" style="font-size:11.5px;margin-top:3px;">Τηλ: 6983460299 • dramoukon@gmail.com</div>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="logoutTeacher()">Αποσύνδεση</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <button type="button" class="btn btn-sm ${state.teacherTab==='guide' ? 'btn-sky' : 'btn-soft-sky'}" onclick="state.teacherTab='guide'; render();">
+                            Οδηγός Λειτουργιών
+                        </button>
+                        <button type="button" class="btn btn-sm ${state.teacherTab==='ai' ? 'btn-sky' : 'btn-ghost'}" onclick="state.teacherTab='ai'; render();">
+                            AI Εντολέας Καθηγητή
+                        </button>
+                        <button type="button" class="btn btn-sm ${state.teacherTab==='syllabus' ? 'btn-sky' : 'btn-ghost'}" onclick="state.teacherTab='syllabus'; render();">
+                            Οργάνωση Ύλης &amp; Κάμερα
+                        </button>
+                        <button type="button" class="btn btn-sm ${state.teacherTab==='classroom' ? 'btn-sky' : 'btn-ghost'}" onclick="state.teacherTab='classroom'; render();">
+                            Αποστολή σε Τμήματα (Α1–Γ3)
+                        </button>
+                        <button type="button" class="btn btn-sm ${state.teacherTab==='schedule' ? 'btn-sky' : 'btn-ghost'}" onclick="state.teacherTab='schedule'; render();">
+                            Επεξεργασία Προγράμματος
+                        </button>
+                        <button type="button" class="btn btn-sm ${state.teacherTab==='settings' ? 'btn-amber' : 'btn-ghost'}" onclick="state.teacherTab='settings'; render();">
+                            Ρυθμίσεις Λογαριασμού (GDPR)
+                        </button>
+                    </div>
+
+                    ${state.teacherTab === "guide" ? `
+                        <div class="panel stack" style="border-color:rgba(56,189,248,0.35);">
+                            <div style="border-bottom:1px solid var(--border);padding-bottom:14px;">
+                                <span class="badge">Αποκλειστικός Οδηγός Εκπαιδευτικών</span>
+                                <h2 style="margin-top:8px;">Τι κάνει κάθε εργαλείο της Πύλης Καθηγητών</h2>
+                            </div>
+                            <div class="grid-2">
+                                <div class="sub-box stack-sm">
+                                    <h3 style="color:var(--sky);">1. AI Εντολέας Καθηγητή</h3>
+                                    <p style="margin:0;font-size:13px;color:#cbd5e1;">
+                                        Γράφετε εντολή στα ελληνικά («Πες μου την ύλη», «Βρες μου το βιβλίο Διόφαντος», «Πρόσθεσε SOS: ...», «Ανέβασε στο Α1: ...»).
+                                    </p>
+                                </div>
+                                <div class="sub-box stack-sm">
+                                    <h3 style="color:var(--emerald);">2. Οργάνωση Ύλης, SOS &amp; Κάμερα</h3>
+                                    <p style="margin:0;font-size:13px;color:#cbd5e1;">
+                                        Επεξεργασία ύλης, SOS, σημειώσεων και ανέβασμα/φωτογράφιση (.png, .jpg, .pdf έως 5MB).
+                                    </p>
+                                </div>
+                                <div class="sub-box stack-sm">
+                                    <h3 style="color:var(--indigo);">3. Αποστολή σε Τμήματα (Α1–Γ3)</h3>
+                                    <p style="margin:0;font-size:13px;color:#cbd5e1;">
+                                        Αποστολή ανακοινώσεων και ασκήσεων σε επιλεγμένα τμήματα.
+                                    </p>
+                                </div>
+                                <div class="sub-box stack-sm">
+                                    <h3 style="color:var(--amber);">4. Ρυθμίσεις Λογαριασμού &amp; GDPR</h3>
+                                    <p style="margin:0;font-size:13px;color:#cbd5e1;">
+                                        Εξαγωγή δεδομένων σε <span class="mono">my-data.json</span>, αλλαγή κωδικού (με ακύρωση παλιών sessions) και οριστική διαγραφή λογαριασμού.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.teacherTab === "ai" ? `
+                        <div class="panel stack-sm">
+                            <h3 style="color:var(--sky);font-size:18px;">AI Εντολέας Καθηγητή</h3>
+                            <div class="row">
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('teacherAiCmd').value='Πες μου αναλυτικά την ύλη των μαθημάτων μου'; runTeacherAiCommand();">Πες μου την ύλη</button>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('teacherAiCmd').value='Βρες μου τα βιβλία Διόφαντος των μαθημάτων μου'; runTeacherAiCommand();">Βρες μου το βιβλίο</button>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('teacherAiCmd').value='Πρόσθεσε SOS: Επανάληψη στους βασικούς ορισμούς του 1ου κεφαλαίου'; runTeacherAiCommand();">Πρόσθεσε SOS</button>
+                            </div>
+                            <div class="row">
+                                <div style="flex:1 1 280px;">
+                                    <input id="teacherAiCmd" type="text" onkeydown="if(event.key==='Enter') runTeacherAiCommand()" placeholder="Γράψτε εντολή...">
+                                </div>
+                                <button type="button" class="btn btn-sky" onclick="runTeacherAiCommand()">Εκτέλεση</button>
+                            </div>
+                            <div class="stack-sm" style="max-height:300px;overflow-y:auto;">
+                                ${state.teacherAiHistory.map(h => `
+                                    <div class="sub-box stack-sm" style="gap:6px;font-size:13px;">
+                                        <div style="font-weight:800;color:var(--sky);">Εντολή: ${esc(h.q)}</div>
+                                        <div style="white-space:pre-line;">${h.a}</div>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.teacherTab === "syllabus" && editCourse ? `
+                        <div class="panel stack">
+                            <div class="row-between">
+                                <h3>Επεξεργασία Ύλης, SOS &amp; Κάμερας</h3>
+                                <select style="width:auto;" onchange="state.selectedEditCourseId=this.value; render();">
+                                    ${myCourses.map(c => `<option value="${c.id}" ${c.id===editCourse.id ? "selected" : ""}>${esc(c.title)}</option>`).join("")}
+                                </select>
+                            </div>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label class="field-label" style="color:var(--amber);">Σημεία SOS Εξετάσεων</label>
+                                    <textarea id="editCourseSos" rows="4">${esc(editCourse.sos)}</textarea>
+                                </div>
+                                <div>
+                                    <label class="field-label" style="color:var(--emerald);">Σημειώσεις Καθηγητή</label>
+                                    <textarea id="editCourseNotes" rows="4">${esc(editCourse.notes)}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label class="field-label" style="color:var(--sky);">Προσθήκη Νέας Ενότητας Ύλης</label>
+                                    <input id="newUnitInput" type="text" placeholder="π.χ. Κεφ. 5: Επαναληπτικές ασκήσεις">
+                                </div>
+                                <div>
+                                    <label class="field-label" style="color:var(--indigo);">Φωτογραφία Πίνακα (.png, .jpg, .pdf — έως 5MB)</label>
+                                    <input type="file" accept=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg,application/pdf" capture="environment" onchange="handleTeacherFileUpload(event, '${editCourse.id}')">
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="button" class="btn btn-emerald" onclick="saveTeacherCourseEdits('${editCourse.id}')">Αποθήκευση Αλλαγών</button>
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.teacherTab === "classroom" ? `
+                        <div class="panel stack-sm">
+                            <h3>Αποστολή Υλικού σε Ψηφιακά Τμήματα</h3>
+                            <div class="row">
+                                ${SECTIONS_LIST.map(s => `
+                                    <label class="sub-box row" style="padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:700;gap:6px;">
+                                        <input type="checkbox" name="postTargetSec" value="${s}" style="width:auto;">
+                                        <span>${s}</span>
+                                    </label>
+                                `).join("")}
+                            </div>
+                            <textarea id="classPostText" rows="4" placeholder="Γράψτε άσκηση, οδηγίες ή ανακοίνωση για τα επιλεγμένα τμήματα..."></textarea>
+                            <div>
+                                <button type="button" class="btn btn-sky" onclick="publishTeacherClassPost()">Δημοσίευση στα Επιλεγμένα Τμήματα</button>
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.teacherTab === "schedule" ? `
+                        <div class="panel stack">
+                            <div class="row-between">
+                                <h3>Επεξεργασία Ωρολογίου Προγράμματος</h3>
+                                <select style="width:auto;" onchange="state.scheduleSection=this.value; render();">
+                                    ${SECTIONS_LIST.map(s => `<option value="${s}" ${state.scheduleSection===s ? "selected" : ""}>Τμήμα ${s}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div class="grid-3">
+                                ${DAYS_LIST.map(day => `
+                                    <div class="sub-box stack-sm">
+                                        <div style="font-weight:800;color:var(--amber);font-size:13px;">${day}</div>
+                                        ${[0,1,2,3,4,5,6].map(h => `
+                                            <input type="text" value="${esc((db.schedule[state.scheduleSection]?.[day]?.[h]) || '')}" onchange="updateScheduleCell('${state.scheduleSection}', '${day}', ${h}, this.value)">
+                                        `).join("")}
+                                    </div>
+                                `).join("")}
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.teacherTab === "settings" ? `
+                        <div class="grid-2">
+                            <div class="panel stack-sm">
+                                <span class="badge badge-emerald">Άρθρο 15 GDPR • Φορητότητα Δεδομένων</span>
+                                <h3>Εξαγωγή των δεδομένων μου</h3>
+                                <p class="muted" style="margin:0;font-size:12.5px;">
+                                    Κατεβάζει το αρχείο <span class="mono">my-data.json</span> με τα στοιχεία του προφίλ σας, την αποδοχή GDPR και τις αναρτήσεις σας (χωρίς password hashes ή tokens).
+                                </p>
+                                <div>
+                                    <button type="button" class="btn btn-sky btn-sm" onclick="exportMyUserDataJson()">Εξαγωγή των δεδομένων μου (my-data.json)</button>
+                                </div>
+                            </div>
+
+                            <div class="panel stack-sm">
+                                <span class="badge badge-indigo">Ασφάλεια Λογαριασμού</span>
+                                <h3>Αλλαγή Κωδικού &amp; Ακύρωση Παλιών Sessions</h3>
+                                <p class="muted" style="margin:0;font-size:12.5px;">
+                                    Απαιτείται τουλάχιστον 10 χαρακτήρες, πεζά, ΚΕΦΑΛΑΙΑ και αριθμός. Ακυρώνει αυτόματα παλαιότερα ενεργά sessions.
+                                </p>
+                                <input id="selfNewPassInp" type="password" placeholder="Νέος ισχυρός κωδικός...">
+                                <div>
+                                    <button type="button" class="btn btn-amber btn-sm" onclick="selfChangeTeacherPassword()">Αλλαγή Κωδικού</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel stack-sm" style="border-color:rgba(251,113,133,0.4);">
+                            <span class="badge badge-rose">Άρθρο 17 GDPR • Οριστική Διαγραφή</span>
+                            <h3>Οριστική Διαγραφή Λογαριασμού</h3>
+                            <p class="muted" style="margin:0;font-size:12.5px;">
+                                Διαγράφει οριστικά τον λογαριασμό σας και τα σχετικά δεδομένα σας.
+                            </p>
+                            <div>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="navigate('deleteAccount')">Οριστική Διαγραφή Λογαριασμού</button>
+                            </div>
+                        </div>
+                    ` : ""}
+                </div>
+            `;
+        }
+
+        function logoutTeacher() {
+            const name = state.currentTeacher?.name || "Καθηγητής";
+            state.currentTeacher = null;
+            state.currentTeacherSessionVer = 0;
+            try { sessionStorage.clear(); } catch (e) {}
+            logActivity(`Αποσύνδεση εκπαιδευτικού: ${name}.`, "LOGOUT", name);
+            showToast("Αποσυνδεθήκατε.");
+            render();
+        }
+
+        function exportMyUserDataJson() {
+            const t = state.currentTeacher;
+            if (!t) return;
+            const myPosts = db.classroomPosts.filter(p => p.teacherName === t.name);
+            const payload = {
+                exported_at: new Date().toISOString(),
+                user: {
+                    id: t.id,
+                    name: t.name,
+                    email: t.email,
+                    specialty: t.specialty,
+                    allowedCourseIds: t.allowedCourseIds,
+                    active: t.active,
+                    accepted_privacy_at: t.accepted_privacy_at || null,
+                    createdAt: t.createdAt
+                },
+                classroom_posts: myPosts
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "my-data.json";
+            a.click();
+            logActivity(`Εξαγωγή προσωπικών δεδομένων (my-data.json) από ${t.email}.`, "DATA_EXPORT", t.id);
+            showToast("Κατέβηκε το αρχείο my-data.json.");
+        }
+
+        async function selfChangeTeacherPassword() {
+            const t = state.currentTeacher;
+            if (!t) return;
+            const newPass = (document.getElementById("selfNewPassInp")?.value || "").trim();
+            if (!isStrongPassword(newPass)) {
+                showToast("Ο κωδικός πρέπει να έχει τουλάχιστον 10 χαρακτήρες, πεζά, ΚΕΦΑΛΑΙΑ και αριθμό.");
+                return;
+            }
+            const target = db.teachers.find(x => x.id === t.id);
+            if (!target) return;
+            target.passHash = await sha256Hex(newPass);
+            target.sessionVersion = (target.sessionVersion || 1) + 1;
+            state.currentTeacherSessionVer = target.sessionVersion;
+            state.currentTeacher = target;
+            saveAppData();
+            document.getElementById("selfNewPassInp").value = "";
+            logActivity(`Αλλαγή κωδικού & ακύρωση παλιών sessions για ${t.email}.`, "PASSWORD_CHANGE", t.id);
+            showToast("Ο κωδικός ενημερώθηκε και τα παλαιότερα sessions ακυρώθηκαν.");
+        }
+
+        async function registerSelfTeacher() {
+            touchActivity();
+            if (!checkRateLimit("register_form", 6)) {
+                showToast("Πολλές προσπάθειες εγγραφής ανά λεπτό.");
+                return;
+            }
+            const hp = (document.getElementById("regHpField")?.value || "").trim();
+            if (hp) {
+                logActivity("Αποκλεισμός bot μέσω honeypot στη φόρμα εγγραφής.", "BOT_BLOCKED", "HONEYPOT");
+                return;
+            }
+
+            const name = document.getElementById("regTName")?.value.trim();
+            const specialty = document.getElementById("regTSpec")?.value.trim();
+            const email = document.getElementById("regTEmail")?.value.trim().toLowerCase();
+            const pass = document.getElementById("regTPass")?.value.trim();
+            const gdprOk = !!document.getElementById("regTGdprCheck")?.checked;
+            const allowedCourseIds = Array.from(document.querySelectorAll("input[name='regTAllowed']:checked")).map(el => el.value);
+
+            if (!gdprOk) {
+                showToast("Πρέπει να αποδεχτείτε την Πολιτική Απορρήτου και τους Όρους Χρήσης.");
+                return;
+            }
+            if (!name || !specialty || !email || !isStrongPassword(pass)) {
+                showToast("Συμπληρώστε όλα τα πεδία. Ο κωδικός πρέπει να έχει τουλ. 10 χαρακτήρες, πεζά, ΚΕΦΑΛΑΙΑ και αριθμό.");
+                return;
+            }
+            if (containsSensitivePII(name) || containsSensitivePII(specialty)) {
+                showToast("Προστασία GDPR: Μην καταχωρείτε τηλέφωνα, ΑΜΚΑ ή ΑΦΜ.");
+                return;
+            }
+            if (!allowedCourseIds.length) {
+                showToast("Επιλέξτε τουλάχιστον ένα μάθημα της ειδικότητάς σας.");
+                return;
+            }
+            if (db.teachers.some(t => t.email.toLowerCase() === email)) {
+                showToast("Υπάρχει ήδη λογαριασμός με αυτό το email.");
+                return;
+            }
+
+            const passHash = await sha256Hex(pass);
+            const isoNow = new Date().toISOString();
+            const nowStr = new Date().toLocaleString("el-GR", { dateStyle: "short", timeStyle: "short" });
+            db.teachers.push({
+                id: "t" + Date.now(),
+                name,
+                email,
+                passHash,
+                specialty,
+                allowedCourseIds,
+                active: false,
+                sessionVersion: 1,
+                accepted_privacy_at: isoNow,
+                createdAt: nowStr
+            });
+            saveAppData();
+            state.teacherAuthMode = "login";
+            logActivity(`Νέα εγγραφή εκπαιδευτικού (${email}) με accepted_privacy_at=${isoNow}.`, "USER_SIGNUP", email);
+            await sendAutomatedEmail(
+                email,
+                name,
+                "KonStudy — Αίτηση Εγγραφής Εκπαιδευτικού",
+                `Λάβαμε την αίτηση εγγραφής σας στο KonStudy (${db.schoolInfo.name}), ${name}.\n\nΗμερομηνία αποδοχής GDPR: ${isoNow}\nΟ λογαριασμός βρίσκεται σε αναμονή επιβεβαίωσης από τον Διαχειριστή.`
+            );
+            showToast("Η εγγραφή ολοκληρώθηκε. Αναμένεται επιβεβαίωση από τον Διαχειριστή.");
+            render();
+        }
+
+        async function loginTeacher() {
+            touchActivity();
+            const hp = (document.getElementById("loginHpField")?.value || "").trim();
+            if (hp) {
+                logActivity("Αποκλεισμός bot μέσω honeypot στη φόρμα σύνδεσης.", "BOT_BLOCKED", "HONEYPOT");
+                return;
+            }
+            if (Date.now() < authGuard.teacherLockedUntil) {
+                const secs = Math.ceil((authGuard.teacherLockedUntil - Date.now()) / 1000);
+                showToast(`Προστασία ασφαλείας: Δοκιμάστε ξανά σε ${secs} δευτερόλεπτα.`);
+                return;
+            }
+
+            const email = (document.getElementById("loginTEmail")?.value || "").trim().toLowerCase();
+            const pass = (document.getElementById("loginTPass")?.value || "").trim();
+            const t = db.teachers.find(x => x.email.toLowerCase() === email);
+            if (!t) {
+                authGuard.teacherFails++;
+                if (authGuard.teacherFails >= 5) authGuard.teacherLockedUntil = Date.now() + 60000;
+                logActivity(`Αποτυχημένη προσπάθεια σύνδεσης για email: ${email || "(κενό)"}.`, "LOGIN_FAILED", email || "UNKNOWN");
+                showToast("Δεν βρέθηκε λογαριασμός εκπαιδευτικού με αυτό το email.");
+                return;
+            }
+            const hash = await sha256Hex(pass);
+            if (hash !== t.passHash) {
+                authGuard.teacherFails++;
+                if (authGuard.teacherFails >= 5) authGuard.teacherLockedUntil = Date.now() + 60000;
+                logActivity(`Λάθος κωδικός σε προσπάθεια σύνδεσης για ${email}.`, "LOGIN_FAILED", email);
+                showToast("Λάθος κωδικός πρόσβασης.");
+                return;
+            }
+            if (!t.active) {
+                logActivity(`Προσπάθεια σύνδεσης σε μη εγκεκριμένο λογαριασμό: ${email}.`, "LOGIN_PENDING", email);
+                showToast("Ο λογαριασμός σας εκκρεμεί προς επιβεβαίωση από τον Διαχειριστή.");
+                return;
+            }
+
+            authGuard.teacherFails = 0;
+            state.currentTeacher = t;
+            state.currentTeacherSessionVer = t.sessionVersion || 1;
+            state.lastActivityAt = Date.now();
+            state.teacherTab = "guide";
+            const device = detectDeviceLabel();
+            const nowStr = new Date().toLocaleString("el-GR");
+            logActivity(`Σύνδεση καθηγητή: ${t.name} από ${device}.`, "LOGIN_SUCCESS", t.id);
+            await sendAutomatedEmail(
+                t.email,
+                t.name,
+                "KonStudy — Ειδοποίηση Νέας Σύνδεσης",
+                `Καταγράφηκε νέα σύνδεση στον λογαριασμό εκπαιδευτικού σας (${t.name}) στο KonStudy.\n\nΣυσκευή: ${device}\nΏρα & Ημερομηνία: ${nowStr}`
+            );
+            showToast(`Καλώς ήρθατε, ${t.name}.`);
+            render();
+        }
+
+        function runTeacherAiCommand() {
+            touchActivity();
+            if (!state.currentTeacher) return;
+            if (!checkRateLimit(`ai_${state.currentTeacher.id}`, 12)) {
+                showToast("Όριο εντολών AI ανά λεπτό. Δοκιμάστε ξανά σε λίγο.");
+                return;
+            }
+            const inp = document.getElementById("teacherAiCmd");
+            const q = (inp?.value || "").trim();
+            if (!q) return;
+
+            const myCourses = db.courses.filter(c => state.currentTeacher.allowedCourseIds.includes(c.id));
+            const lower = q.toLowerCase();
+            let reply = "";
+
+            if (lower.includes("υλη") || lower.includes("ύλη") || lower.includes("κεφαλαι")) {
+                reply = myCourses.map(c => `<strong>${esc(c.title)}</strong>:\n• ${c.units.map(u => esc(u)).join("\n• ")}`).join("\n\n");
+            } else if (lower.includes("βιβλ") || lower.includes("διοφαντ") || lower.includes("διόφαντ")) {
+                reply = myCourses.map(c => `<strong>${esc(c.title)}</strong>: <a href="${esc(c.bookUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--sky);font-weight:800;">Άνοιγμα Επίσημου Βιβλίου Διόφαντος ↗</a>`).join("\n");
+            } else if (lower.includes("sos") || lower.includes("σος")) {
+                const text = q.replace(/πρόσθεσε\s*sos\s*:?/i, "").trim();
+                if (myCourses[0] && text && !containsSensitivePII(text)) {
+                    myCourses[0].sos = (myCourses[0].sos ? myCourses[0].sos + "\n• " : "• ") + text;
+                    saveAppData();
+                    reply = `Προστέθηκε στα SOS του μαθήματος <strong>${esc(myCourses[0].title)}</strong>: «${esc(text)}»`;
+                }
+            } else {
+                const secMatch = q.match(/\b([ΑΒΓ][1-3])\b/i);
+                if (secMatch && !containsSensitivePII(q)) {
+                    const sec = secMatch[1].toUpperCase();
+                    db.classroomPosts.unshift({
+                        id: "p_" + Date.now(),
+                        sections: [sec],
+                        teacherName: state.currentTeacher.name,
+                        courseTitle: myCourses[0]?.title || state.currentTeacher.specialty,
+                        text: q,
+                        date: new Date().toLocaleString("el-GR", { dateStyle: "short", timeStyle: "short" })
+                    });
+                    saveAppData();
+                    reply = `Δημοσιεύτηκε απευθείας στο Τμήμα <strong>${sec}</strong>.`;
+                } else {
+                    reply = `Διαθέσιμες εντολές:\n• «Πες μου την ύλη»\n• «Βρες μου το βιβλίο Διόφαντος»\n• «Πρόσθεσε SOS: ...»\n• «Ανέβασε στο Α1: ...»`;
+                }
+            }
+
+            state.teacherAiHistory.unshift({ q, a: reply });
+            if (inp) inp.value = "";
+            render();
+        }
+
+        function saveTeacherCourseEdits(courseId) {
+            touchActivity();
+            if (!state.currentTeacher || !state.currentTeacher.allowedCourseIds.includes(courseId)) {
+                showToast("Δεν έχετε δικαίωμα επεξεργασίας αυτού του μαθήματος.");
+                return;
+            }
+            const c = db.courses.find(x => x.id === courseId);
+            if (!c) return;
+            const sosVal = document.getElementById("editCourseSos")?.value || "";
+            const notesVal = document.getElementById("editCourseNotes")?.value || "";
+            const newUnit = (document.getElementById("newUnitInput")?.value || "").trim();
+            if (containsSensitivePII(sosVal) || containsSensitivePII(notesVal) || containsSensitivePII(newUnit)) {
+                showToast("Προστασία GDPR: Αφαιρέστε τηλέφωνα ή προσωπικά στοιχεία.");
+                return;
+            }
+            c.sos = sosVal;
+            c.notes = notesVal;
+            if (newUnit) c.units.push(newUnit);
+            saveAppData();
+            logActivity(`Καθηγητής (${state.currentTeacher.name}): Ενημέρωσε το μάθημα ${c.title}.`, "COURSE_UPDATE", state.currentTeacher.id);
+            showToast("Οι αλλαγές αποθηκεύτηκαν.");
+            render();
+        }
+
+        async function handleTeacherFileUpload(event, courseId) {
+            touchActivity();
+            const file = event.target.files?.[0];
+            const c = db.courses.find(x => x.id === courseId);
+            if (!file || !c) return;
+
+            const check = validateUploadFile(file, false);
+            if (!check.ok) {
+                event.target.value = "";
+                showToast(check.reason);
+                return;
+            }
+
+            try {
+                if ((file.type || "").startsWith("image/")) {
+                    c.photo = await compressPhotoDataUrl(file, 680, 0.68);
+                    saveAppData();
+                    showToast("Η εικόνα ελέγχθηκε (≤5MB), συμπιέστηκε και αποθηκεύτηκε.");
+                } else {
+                    const pdfNote = `\n[Επισυναπτόμενο αρχείο PDF: ${file.name} (${(file.size / 1024).toFixed(0)} KB)]`;
+                    c.notes = (c.notes || "") + pdfNote;
+                    saveAppData();
+                    showToast(`Επικυρώθηκε το αρχείο ${file.name} (≤5MB) και καταχωρήθηκε στις σημειώσεις.`);
+                }
+                render();
+            } catch (e) {
+                showToast("Αδυναμία επεξεργασίας αρχείου.");
+            }
+        }
+
+        function publishTeacherClassPost() {
+            touchActivity();
+            if (!state.currentTeacher) return;
+            const secs = Array.from(document.querySelectorAll("input[name='postTargetSec']:checked")).map(el => el.value);
+            const text = (document.getElementById("classPostText")?.value || "").trim();
+            if (!secs.length || !text) {
+                showToast("Επιλέξτε τουλάχιστον ένα τμήμα και γράψτε κείμενο.");
+                return;
+            }
+            if (containsSensitivePII(text)) {
+                showToast("Προστασία GDPR: Απαγορεύεται η ανάρτηση ευαίσθητων προσωπικών δεδομένων.");
+                return;
+            }
+            const myCourse = db.courses.find(c => state.currentTeacher.allowedCourseIds.includes(c.id));
+            db.classroomPosts.unshift({
+                id: "p_" + Date.now(),
+                sections: secs,
+                teacherName: state.currentTeacher.name,
+                courseTitle: myCourse ? myCourse.title : state.currentTeacher.specialty,
+                text,
+                date: new Date().toLocaleString("el-GR", { dateStyle: "short", timeStyle: "short" })
+            });
+            saveAppData();
+            logActivity(`Καθηγητής (${state.currentTeacher.name}): Ανάρτηση στα τμήματα ${secs.join(", ")}.`, "CLASS_POST", state.currentTeacher.id);
+            showToast(`Η ανάρτηση δημοσιεύτηκε στα τμήματα: ${secs.join(", ")}.`);
+            render();
+        }
+
+        function updateScheduleCell(sec, day, hourIdx, val) {
+            touchActivity();
+            if (!state.currentTeacher) return;
+            if (!db.schedule[sec]) db.schedule[sec] = {};
+            if (!db.schedule[sec][day]) db.schedule[sec][day] = [];
+            db.schedule[sec][day][hourIdx] = val;
+            saveAppData();
+            showToast(`Ενημερώθηκε το πρόγραμμα (${sec} • ${day} ${hourIdx + 1}η ώρα).`);
+        }
+
+        // =====================================================================
+        // 13. ADMIN COMMAND CENTER (Role Enforcement + Audit Log + User Mgmt)
+        // =====================================================================
+        function renderAdminView() {
+            if (!state.isAdminLoggedIn) {
+                return `
+                    <div style="max-width:440px;margin:0 auto;" class="view-enter">
+                        <div class="panel stack">
+                            <div>
+                                <span class="badge badge-amber">${SVG.shield} Περιοχή Διαχειριστή</span>
+                                <h2 style="margin-top:10px;">Είσοδος Διαχειριστή</h2>
+                                <p class="muted" style="margin:4px 0 0;font-size:12.5px;">Εισάγετε τον κωδικό διαχείρισης για πρόσβαση (προεπιλογή: <span class="mono">12345</span>).</p>
+                            </div>
+                            <input id="adminHpField" class="hp-field" type="text" tabindex="-1" autocomplete="off">
+                            <input id="adminPassInput" type="password" onkeydown="if(event.key==='Enter') loginAdmin()" placeholder="Κωδικός πρόσβασης...">
+                            <button type="button" class="btn btn-amber" style="width:100%;" onclick="loginAdmin()">Είσοδος</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const pendingCount = db.teachers.filter(t => !t.active).length;
+
+            return `
+                <div class="stack view-enter">
+                    <div class="panel row-between">
+                        <div>
+                            <div class="row">
+                                <span class="badge badge-amber">role === 'admin'</span>
+                                <h2>Κέντρο Διαχείρισης (Admin)</h2>
+                            </div>
+                            <div class="muted" style="font-size:12px;">Έλεγχος λογαριασμών καθηγητών, ασφάλειας, EmailJS &amp; Audit Log</div>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="logoutAdmin()">Έξοδος</button>
+                    </div>
+
+                    <div class="row">
+                        ${[
+                            ["teachers", `Λογαριασμοί Καθηγητών (${pendingCount > 0 ? pendingCount + ' Νέοι' : db.teachers.length})`],
+                            ["overview", "Ασφάλεια & EmailJS"],
+                            ["sections", "Κωδικοί Τμημάτων Α1–Γ3"],
+                            ["school", "Τίτλος Πλατφόρμας"],
+                            ["logs", `Audit Log (${db.audit_logs.length})`],
+                            ["backup", "Λήψη index.html"]
+                        ].map(([id, label]) => `
+                            <button type="button" class="btn btn-sm ${state.adminTab===id ? 'btn-amber' : 'btn-ghost'}" onclick="state.adminTab='${id}'; render();">
+                                ${label}
+                            </button>
+                        `).join("")}
+                    </div>
+
+                    ${state.adminTab === "teachers" ? `
+                        <div class="panel stack">
+                            <div class="row-between" style="border-bottom:1px solid var(--border);padding-bottom:14px;">
+                                <div>
+                                    <h3>Επιβεβαίωση &amp; Διαχείριση Λογαριασμών Καθηγητών (${db.teachers.length})</h3>
+                                    <div class="muted" style="font-size:12px;">Επιβεβαιώστε νέους λογαριασμούς, αλλάξτε κωδικούς ή διαγράψτε λογαριασμό.</div>
+                                </div>
+                                <span class="badge badge-amber">Σε αναμονή: ${pendingCount}</span>
+                            </div>
+
+                            ${db.teachers.length === 0 ? `
+                                <div class="sub-box muted" style="text-align:center;font-size:13px;">
+                                    Δεν υπάρχουν ακόμα εγγεγραμμένοι λογαριασμοί καθηγητών.
+                                </div>
+                            ` : `
+                                <div class="stack-sm">
+                                    ${db.teachers.map(t => `
+                                        <div class="sub-box stack-sm" style="border-color:${t.active ? 'rgba(52,211,153,0.3)' : 'rgba(251,191,36,0.45)'};">
+                                            <div class="row-between">
+                                                <div class="stack-sm" style="gap:4px;">
+                                                    <div class="row">
+                                                        <strong>${esc(t.name)}</strong>
+                                                        <span class="badge">${esc(t.specialty)}</span>
+                                                        ${t.active
+                                                            ? `<span class="badge badge-emerald">Εγκεκριμένος</span>`
+                                                            : `<span class="badge badge-amber">Σε Αναμονή Επιβεβαίωσης</span>`
+                                                        }
+                                                    </div>
+                                                    <div class="muted" style="font-size:12px;">${esc(t.email)} • accepted_privacy_at: <span class="mono">${esc(t.accepted_privacy_at || t.createdAt)}</span></div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <button type="button" class="btn btn-sm ${t.active ? 'btn-ghost' : 'btn-emerald'}" onclick="adminToggleTeacherStatus('${t.id}')">
+                                                        ${t.active ? 'Αναστολή' : 'Επιβεβαίωση & Ενεργοποίηση'}
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="adminDeleteTeacher('${t.id}')">
+                                                        Διαγραφή
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="row" style="padding-top:10px;border-top:1px solid var(--border);">
+                                                <div style="flex:1 1 240px;">
+                                                    <input id="resetTPass_${t.id}" type="text" placeholder="Νέος ισχυρός κωδικός (τουλ. 10 χαρακτήρες)...">
+                                                </div>
+                                                <button type="button" class="btn btn-sky btn-sm" onclick="adminResetTeacherPassword('${t.id}')">
+                                                    Αλλαγή Κωδικού
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join("")}
+                                </div>
+                            `}
+                        </div>
+                    ` : ""}
+
+                    ${state.adminTab === "overview" ? `
+                        <div class="grid-2">
+                            <div class="panel stack-sm">
+                                <h3>Αλλαγή Κωδικού Admin</h3>
+                                <input id="newAdminPassInp" type="password" placeholder="Νέος κωδικός (τουλ. 10 χαρακτήρες, πεζά/ΚΕΦΑΛΑΙΑ/αριθμός)">
+                                <div>
+                                    <button type="button" class="btn btn-amber btn-sm" onclick="changeAdminPassword()">Ενημέρωση Κωδικού</button>
+                                </div>
+                            </div>
+
+                            <div class="panel stack-sm">
+                                <h3 style="color:var(--sky);">Αυτόματα Emails Ασφαλείας (EmailJS)</h3>
+                                <div class="muted" style="font-size:12px;">Ενεργοποιείται μόνο εφόσον ο χρήστης έχει αποδεχτεί τα cookies/scripts.</div>
+                                <div class="grid-3" style="gap:8px;">
+                                    <input id="ejsService" type="text" value="${esc(db.integrations.emailjsServiceId)}" placeholder="Service ID">
+                                    <input id="ejsTemplate" type="text" value="${esc(db.integrations.emailjsTemplateId)}" placeholder="Template ID">
+                                    <input id="ejsPublic" type="text" value="${esc(db.integrations.emailjsPublicKey)}" placeholder="Public Key">
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-sky btn-sm" onclick="saveIntegrations()">Αποθήκευση EmailJS</button>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.adminTab === "sections" ? `
+                        <div class="panel stack-sm">
+                            <h3>Κωδικοί Πρόσβασης Τμημάτων Α1–Γ3</h3>
+                            <div class="grid-3">
+                                ${SECTIONS_LIST.map(s => `
+                                    <div class="sub-box row-between">
+                                        <strong style="color:var(--sky);font-size:13px;">Τμήμα ${s}</strong>
+                                        <input type="text" style="width:130px;text-align:right;" class="mono" value="${esc(db.sectionCodes[s])}" onchange="db.sectionCodes['${s}']=this.value; saveAppData(); showToast('Ενημερώθηκε ο κωδικός για το ${s}');">
+                                    </div>
+                                `).join("")}
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.adminTab === "school" ? `
+                        <div class="panel stack-sm" style="max-width:540px;">
+                            <h3>Τίτλος Πλατφόρμας</h3>
+                            <input id="schoolNameInp" type="text" value="${esc(db.schoolInfo.name)}">
+                            <div>
+                                <button type="button" class="btn btn-emerald btn-sm" onclick="db.schoolInfo.name=document.getElementById('schoolNameInp').value.trim() || db.schoolInfo.name; saveAppData(); showToast('Αποθηκεύτηκε.'); render();">Αποθήκευση</button>
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.adminTab === "logs" ? `
+                        <div class="panel stack-sm">
+                            <h3>Audit Log (Ιστορικό Ενεργειών)</h3>
+                            <div class="stack-sm mono" style="max-height:360px;overflow-y:auto;font-size:11.5px;">
+                                ${db.audit_logs.map(entry => `
+                                    <div class="sub-box" style="padding:10px 12px;">
+                                        <div style="color:var(--sky);">${esc(entry.timestamp)} • <span class="badge">${esc(entry.action)}</span> • ${esc(entry.actor)}</div>
+                                        <div style="margin-top:4px;color:#e2e8f0;">${esc(entry.details)}</div>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        </div>
+                    ` : ""}
+
+                    ${state.adminTab === "backup" ? `
+                        <div class="panel stack-sm">
+                            <h3>Εξαγωγή Έτοιμου index.html</h3>
+                            <p class="muted" style="margin:0;font-size:13px;">Κατεβάστε το ενημερωμένο <strong>index.html</strong>.</p>
+                            <div>
+                                <button type="button" class="btn btn-emerald" onclick="exportReadyHtml()">Λήψη Έτοιμου index.html</button>
+                            </div>
+                        </div>
+                    ` : ""}
+                </div>
+            `;
+        }
+
+        function requireAdminRole() {
+            return state.isAdminLoggedIn === true;
+        }
+
+        function logoutAdmin() {
+            state.isAdminLoggedIn = false;
+            try { sessionStorage.clear(); } catch (e) {}
+            logActivity("Έξοδος Διαχειριστή.", "ADMIN_LOGOUT", "ADMIN");
+            render();
+        }
+
+        async function loginAdmin() {
+            touchActivity();
+            const hp = (document.getElementById("adminHpField")?.value || "").trim();
+            if (hp) {
+                logActivity("Αποκλεισμός bot μέσω honeypot στο Admin login.", "BOT_BLOCKED", "HONEYPOT");
+                return;
+            }
+            if (Date.now() < authGuard.adminLockedUntil) {
+                const secs = Math.ceil((authGuard.adminLockedUntil - Date.now()) / 1000);
+                showToast(`Προστασία ασφαλείας: Δοκιμάστε ξανά σε ${secs} δευτερόλεπτα.`);
+                return;
+            }
+
+            const pass = (document.getElementById("adminPassInput")?.value || "").trim();
+            const hash = await sha256Hex(pass);
+            const expectedDefault = await sha256Hex("12345");
+            if (!db.adminPassHash) {
+                db.adminPassHash = expectedDefault;
+                saveAppData();
+            }
+            if (hash === db.adminPassHash || (pass === "12345" && db.adminPassHash === expectedDefault)) {
+                authGuard.adminFails = 0;
+                state.isAdminLoggedIn = true;
+                state.lastActivityAt = Date.now();
+                logActivity("Επιτυχής είσοδος Διαχειριστή.", "ADMIN_LOGIN_SUCCESS", "ADMIN");
+                showToast("Καλώς ήρθατε στο Κέντρο Διαχείρισης.");
+                render();
+            } else {
+                authGuard.adminFails++;
+                if (authGuard.adminFails >= 5) authGuard.adminLockedUntil = Date.now() + 60000;
+                logActivity("Αποτυχημένη προσπάθεια σύνδεσης Διαχειριστή.", "ADMIN_LOGIN_FAILED", "ADMIN");
+                showToast("Λάθος κωδικός πρόσβασης.");
+            }
+        }
+
+        async function changeAdminPassword() {
+            if (!requireAdminRole()) return;
+            const p = (document.getElementById("newAdminPassInp")?.value || "").trim();
+            if (!isStrongPassword(p)) {
+                showToast("Ο νέος κωδικός πρέπει να έχει τουλ. 10 χαρακτήρες, πεζά, ΚΕΦΑΛΑΙΑ και αριθμό.");
+                return;
+            }
+            db.adminPassHash = await sha256Hex(p);
+            saveAppData();
+            logActivity("Admin: Αλλαγή κωδικού διαχειριστή.", "ADMIN_PASS_CHANGE", "ADMIN");
+            showToast("Ο κωδικός διαχειριστή ενημερώθηκε.");
+            render();
+        }
+
+        function saveIntegrations() {
+            if (!requireAdminRole()) return;
+            db.integrations.emailjsServiceId = (document.getElementById("ejsService")?.value || "").trim();
+            db.integrations.emailjsTemplateId = (document.getElementById("ejsTemplate")?.value || "").trim();
+            db.integrations.emailjsPublicKey = (document.getElementById("ejsPublic")?.value || "").trim();
+            saveAppData();
+            logActivity("Admin: Ενημέρωση ρυθμίσεων EmailJS.", "INTEGRATIONS_UPDATE", "ADMIN");
+            showToast("Οι ρυθμίσεις EmailJS αποθηκεύτηκαν.");
+        }
+
+        async function adminToggleTeacherStatus(teacherId) {
+            if (!requireAdminRole()) return;
+            const t = db.teachers.find(x => x.id === teacherId);
+            if (!t) return;
+            t.active = !t.active;
+            saveAppData();
+            logActivity(
+                `Admin: ${t.active ? "Ενεργοποίησε" : "Ανέστειλε"} τον λογαριασμό του/της ${t.name} (${t.email}).`,
+                "ROLE_STATUS_CHANGE",
+                "ADMIN"
+            );
+            await sendAutomatedEmail(
+                t.email,
+                t.name,
+                `KonStudy — ${t.active ? "Επιβεβαίωση Λογαριασμού" : "Αναστολή Λογαριασμού"}`,
+                t.active
+                    ? `Ο λογαριασμός εκπαιδευτικού σας στο KonStudy επιβεβαιώθηκε από τον Διαχειριστή.`
+                    : `Ο λογαριασμός εκπαιδευτικού σας στο KonStudy τέθηκε προσωρινά σε αναστολή.`
+            );
+            showToast(t.active ? `Ο λογαριασμός του/της ${t.name} επιβεβαιώθηκε.` : `Ο λογαριασμός ανεστάλη.`);
+            render();
+        }
+
+        async function adminResetTeacherPassword(teacherId) {
+            if (!requireAdminRole()) return;
+            const t = db.teachers.find(x => x.id === teacherId);
+            const inp = document.getElementById(`resetTPass_${teacherId}`);
+            if (!t || !inp) return;
+            const newPass = inp.value.trim();
+            if (!isStrongPassword(newPass)) {
+                showToast("Ο νέος κωδικός πρέπει να έχει τουλ. 10 χαρακτήρες, πεζά, ΚΕΦΑΛΑΙΑ και αριθμό.");
+                return;
+            }
+            t.passHash = await sha256Hex(newPass);
+            t.sessionVersion = (t.sessionVersion || 1) + 1;
+            if (state.currentTeacher && state.currentTeacher.id === t.id) {
+                state.currentTeacher = null;
+                state.currentTeacherSessionVer = 0;
+            }
+            saveAppData();
+            inp.value = "";
+            logActivity(`Admin: Αλλαγή κωδικού & ακύρωση παλιών sessions για ${t.email}.`, "ADMIN_RESET_PASS", "ADMIN");
+            await sendAutomatedEmail(
+                t.email,
+                t.name,
+                "KonStudy — Ενημέρωση Κωδικού Πρόσβασης",
+                `Ο Διαχειριστής ενημέρωσε τον κωδικό πρόσβασής σας στο KonStudy.\n\nΝέος Κωδικός: ${newPass}`
+            );
+            showToast(`Ο κωδικός του/της ${t.name} ενημερώθηκε.`);
+            render();
+        }
+
+        function adminDeleteTeacher(teacherId) {
+            if (!requireAdminRole()) return;
+            const t = db.teachers.find(x => x.id === teacherId);
+            if (!t) return;
+            db.teachers = db.teachers.filter(x => x.id !== teacherId);
+            db.classroomPosts = db.classroomPosts.filter(p => p.teacherName !== t.name);
+            if (state.currentTeacher && state.currentTeacher.id === teacherId) {
+                state.currentTeacher = null;
+                state.currentTeacherSessionVer = 0;
+            }
+            saveAppData();
+            logActivity(`Admin: Οριστική διαγραφή λογαριασμού (${t.email}).`, "ADMIN_DELETE_USER", "ADMIN");
+            showToast(`Ο λογαριασμός του/της ${t.name} διαγράφηκε.`);
+            render();
+        }
+
+        function exportReadyHtml() {
+            if (!requireAdminRole()) return;
+            const htmlDoc = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const blob = new Blob([htmlDoc], { type: "text/html;charset=utf-8" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "index.html";
+            a.click();
+            showToast("Κατέβηκε το έτοιμο index.html.");
+        }
+
+        // =====================================================================
+        // 14. ULTRA-LIGHTWEIGHT VISIBILITY-AWARE AMBIENT CANVAS & TIMERS
+        // =====================================================================
+        function initAmbientCanvas() {
+            const canvas = document.getElementById("ambientCanvas");
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            let w = (canvas.width = window.innerWidth);
+            let h = (canvas.height = window.innerHeight);
+
+            window.addEventListener("resize", () => {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }, { passive: true });
+
+            const nodes = Array.from({ length: 22 }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                vx: (Math.random() - 0.5) * 0.22,
+                vy: (Math.random() - 0.5) * 0.22,
+                r: 1.2 + Math.random()
+            }));
+
+            let lastTime = 0;
+            function frame(ts) {
+                if (!document.hidden && ts - lastTime > 42) {
+                    lastTime = ts;
+                    ctx.clearRect(0, 0, w, h);
+                    ctx.fillStyle = "rgba(56, 189, 248, 0.34)";
+                    for (let i = 0; i < nodes.length; i++) {
+                        const p = nodes[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.x < 0 || p.x > w) p.vx *= -1;
+                        if (p.y < 0 || p.y > h) p.vy *= -1;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        }
+
+        function applyInitialHashView() {
+            const h = (window.location.hash || "").toLowerCase();
+            if (h === "#/privacy") state.view = "privacy";
+            else if (h === "#/terms") state.view = "terms";
+            else if (h === "#/sections") state.view = "sections";
+            else if (h === "#/schedule") state.view = "schedule";
+            else if (h === "#/exams") state.view = "exams";
+            else if (h === "#/teacher") state.view = "teacher";
+            else if (h === "#/admin") state.view = "admin";
+            else if (h === "#/delete-account") state.view = "deleteAccount";
+            else state.view = "home";
+        }
+
+        window.addEventListener("hashchange", () => {
+            applyInitialHashView();
+            render();
+        });
+
+        window.onload = function () {
+            applyInitialHashView();
+            ["click", "keydown", "mousemove", "scroll"].forEach(ev => {
+                window.addEventListener(ev, touchActivity, { passive: true });
+            });
+            setInterval(enforceSessionTimeout, 30000);
+            render();
+            initAmbientCanvas();
+        },
+    </script>
+</body>
+</html>
